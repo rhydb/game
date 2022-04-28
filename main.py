@@ -23,10 +23,27 @@ class Game:
         self.bg = (255, 255, 255)
         self.running = True
 
+    def charmovement(self,event):
+        if event.type== pygame.KEYDOWN:
+            entity.vampire.startlocation[1]+=50
+        if event.type== pygame.KEYUP:
+            entity.vampire.startlocation[1]-=50
+        if event.type== pygame.K_RIGHT:
+            entity.vampire.startlocation[0]+=50
+        if event.type== pygame.K_LEFT:
+            entity.vampire.startlocation[0]-=50
+
+
     def input(self):
         for event in pygame.event.get():
+            self.charmovement(event)
             if event.type == pygame.QUIT:
                 self.running = False
+
+
+
+
+
 
     def loop(self):
 
@@ -36,17 +53,10 @@ class Game:
             clock.tick(FPS)
             self.input()
 
+
             self.window.fill(self.bg)
             self.window.blit(entity.vampire.ent,entity.vampire.startlocation)
             pygame.display.flip()
-
-
-
-
-
-
-
-
 
 
 
