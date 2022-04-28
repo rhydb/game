@@ -1,16 +1,40 @@
 import pygame
-import xml.etree.ElementTree as ET
+import json
 
-class Tileset:
+
+class Tilemap:
     def __init__(self, file):
-        xml = ET.parse(file)
-        root = xml.getroot()
-        for layer in root.findall("layer"):
-            data = layer.find("data")
-            self.data = []
-            for row in data.text.strip().split("\n"):
-                self.data.append([int(tile) for tile in row.split(",")[:-1]])
-            print(self.data)
+        self.tiles = []
+
+        with open(file) as f:
+            data = json.load(f)
+            self.tile_set = data["layers"][0]["data"]
+            self.width = data["layers"][0]["width"]
+
+            tile_set_info = data["tilesets"][0]
+            self.columns = tile_set_info["columns"]
+            self.tw = tile_set_info["tilewidth"]
+            self.th= tile_set_info["tileheight"]
+            self.image = pygame.image.load(tile_set_info["image"])
+            self.image_rect = self.image.get_rect()
+            for y in range(0, self.image_rect.h, self.th):
+                for x in range(0, self.image_rect.w ,self.tw):
+                    tile = pygame.Surface((self.tw, self.th))
+                    tile.blit(self.image, (0, 0), (x, y, self.tw, self.th))
+                    self.tiles.append(tile)
+
+
+    def render(self, display):
+        for i, index in enumerate(self.tile_set):
+            if index == 0:
+                continue
+            index -= 1
+            x = (i % self.width) * self.tw
+            y = (i // self.width) * self.th
+            tile = self.tiles[index]
+            display.blit(tile, (x, y), (0, 0, self.tw, self.th))
+
+
 
 
 class Game:
