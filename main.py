@@ -24,26 +24,22 @@ class Game:
         self.running = True
 
     def charmovement(self,event):
-        if event.type== pygame.KEYDOWN:
-            entity.vampire.startlocation[1]+=50
-        if event.type== pygame.KEYUP:
-            entity.vampire.startlocation[1]-=50
-        if event.type== pygame.K_RIGHT:
-            entity.vampire.startlocation[0]+=50
-        if event.type== pygame.K_LEFT:
-            entity.vampire.startlocation[0]-=50
+        if event.type==pygame.KEYDOWN:
+            if event.key== pygame.K_DOWN:
+                entity.vampire.startlocation[1]+=entity.vampire.velocity
+            if event.key== pygame.K_UP:
+                entity.vampire.startlocation[1]-=entity.vampire.velocity
+            if event.key== pygame.K_RIGHT:
+                entity.vampire.startlocation[0]+=entity.vampire.velocity
+            if event.key== pygame.K_LEFT:
+                entity.vampire.startlocation[0]-=entity.vampire.velocity
 
 
     def input(self):
         for event in pygame.event.get():
-            self.charmovement(event)
             if event.type == pygame.QUIT:
                 self.running = False
-
-
-
-
-
+            self.charmovement(event)
 
     def loop(self):
 
