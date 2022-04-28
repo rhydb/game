@@ -22,9 +22,6 @@ class Game:
             self.window.fill(self.bg)
             pygame.display.flip()
 
-def helloworld():
-    print("helloworld")
-
 
 helloworld()
 Game().loop()
