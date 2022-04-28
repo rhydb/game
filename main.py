@@ -3,11 +3,11 @@ import pygame
 
 class Game:
     def __init__(self):
-        self.width = 1280
+        self.width = 600
         self.height = 720
         self.window = pygame.display.set_mode((self.width, self.height))
 
-        self.bg = (50, 100, 70)
+        self.bg = (0, 255, 0)
         self.running = True
 
     def input(self):
@@ -22,5 +22,9 @@ class Game:
             self.window.fill(self.bg)
             pygame.display.flip()
 
+def helloworld():
+    print("helloworld")
 
+
+helloworld()
 Game().loop()
