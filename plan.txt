@@ -1,0 +1,19 @@
+this is the plan ------
+
+platforming game
+
+goals
+movement -
+    being able to input directions
+    gravity
+    floor collisions
+    jumping
+
+surroundings -
+    platforms
+    holes/pits
+
+entities -
+    enemies
+    power ups
+
