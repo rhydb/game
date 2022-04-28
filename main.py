@@ -1,5 +1,6 @@
 import pygame
 import json
+import entity
 
 
 class Tilemap:
@@ -39,24 +40,47 @@ class Tilemap:
 
 class Game:
     def __init__(self):
-        self.width = 600
+        self.width = 1280
         self.height = 720
         self.window = pygame.display.set_mode((self.width, self.height))
 
-        self.bg = (0, 255, 0)
+        self.bg = (255, 255, 255)
         self.running = True
+
+    def charmovement(self,event):
+        if event.type==pygame.KEYDOWN:
+            if event.key== pygame.K_DOWN:
+                entity.vampire.startlocation[1]+=entity.vampire.velocity
+            if event.key== pygame.K_UP:
+                entity.vampire.startlocation[1]-=entity.vampire.velocity
+            if event.key== pygame.K_RIGHT:
+                entity.vampire.startlocation[0]+=entity.vampire.velocity
+            if event.key== pygame.K_LEFT:
+                entity.vampire.startlocation[0]-=entity.vampire.velocity
+
 
     def input(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+            self.charmovement(event)
 
     def loop(self):
+
+        FPS = 60
+        clock =pygame.time.Clock()
         while self.running:
+            clock.tick(FPS)
             self.input()
 
+
             self.window.fill(self.bg)
+            self.window.blit(entity.vampire.ent,entity.vampire.startlocation)
             pygame.display.flip()
+
+
+
+
 
 
 Game().loop()
