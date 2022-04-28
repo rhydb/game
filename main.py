@@ -1,5 +1,6 @@
 import pygame
 import xml.etree.ElementTree as ET
+import entity
 
 class Tileset:
     def __init__(self, file):
@@ -36,7 +37,12 @@ class Game:
             self.input()
 
             self.window.fill(self.bg)
+            self.window.blit(entity.vampire.ent,entity.vampire.startlocation)
             pygame.display.flip()
+
+
+
+
 
 
 
