@@ -1,4 +1,16 @@
 import pygame
+import xml.etree.ElementTree as ET
+
+class Tileset:
+    def __init__(self, file):
+        xml = ET.parse(file)
+        root = xml.getroot()
+        for layer in root.findall("layer"):
+            data = layer.find("data")
+            self.data = []
+            for row in data.text.strip().split("\n"):
+                self.data.append([int(tile) for tile in row.split(",")[:-1]])
+            print(self.data)
 
 
 class Game:
