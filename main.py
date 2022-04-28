@@ -75,9 +75,9 @@ class Game:
             self.input()
 
 
-            self.window.fill(self.bg)
+            self.display.fill(self.bg)
             self.level.render(self.display)
-            self.window.blit(entity.vampire.ent,entity.vampire.startlocation)
+            self.display.blit(entity.vampire.ent,entity.vampire.startlocation)
             pygame.display.flip()
 
 
