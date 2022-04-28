@@ -15,11 +15,11 @@ class Tileset:
 
 class Game:
     def __init__(self):
-        self.width = 600
+        self.width = 1280
         self.height = 720
         self.window = pygame.display.set_mode((self.width, self.height))
 
-        self.bg = (0, 255, 0)
+        self.bg = (255, 255, 255)
         self.running = True
 
     def input(self):
@@ -28,11 +28,23 @@ class Game:
                 self.running = False
 
     def loop(self):
+
+        FPS = 60
+        clock =pygame.time.Clock()
         while self.running:
+            clock.tick(FPS)
             self.input()
 
             self.window.fill(self.bg)
             pygame.display.flip()
+
+
+
+
+
+
+
+
 
 
 Game().loop()
