@@ -35,5 +35,4 @@ class Game:
             pygame.display.flip()
 
 
-helloworld()
 Game().loop()
