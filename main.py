@@ -48,16 +48,35 @@ class Game:
         self.running = True
         self.level = Tilemap("map.tmj")
 
+
+    def entityvelocity(self,character,axis,magnitude):
+        #axis 0 = x       1 = y
+        character.velocity[axis]=magnitude
+
+
+
     def charmovement(self,event):
+        entity.vampire.position[0]+=entity.vampire.velocity[0]
+        entity.vampire.position[1] += entity.vampire.velocity[1]
+
         if event.type==pygame.KEYDOWN:
             if event.key== pygame.K_DOWN:
-                entity.vampire.startlocation[1]+=entity.vampire.velocity
+                self.entityvelocity(entity.vampire,0,-entity.vampire.acceleration)
             if event.key== pygame.K_UP:
-                entity.vampire.startlocation[1]-=entity.vampire.velocity
+                self.entityvelocity(entity.vampire,1,entity.vampire.acceleration)
             if event.key== pygame.K_RIGHT:
-                entity.vampire.startlocation[0]+=entity.vampire.velocity
+                self.entityvelocity(entity.vampire,0,entity.vampire.acceleration)
             if event.key== pygame.K_LEFT:
-                entity.vampire.startlocation[0]-=entity.vampire.velocity
+                self.entityvelocity(entity.vampire,1,-entity.vampire.acceleration)
+        if event.type==pygame.KEYUP:
+            if event.key ==pygame.K_LEFT or event.key ==pygame.K_RIGHT:
+                self.entityvelocity(entity.vampire, 0, 0)
+            if event.key ==pygame.K_UP or event.key ==pygame.K_UP:
+                self.entityvelocity(entity.vampire, 1, 0)
+
+
+
+
 
 
     def input(self):
@@ -74,10 +93,12 @@ class Game:
             clock.tick(FPS)
             self.input()
 
-
             self.display.fill(self.bg)
             self.level.render(self.display)
+
             self.display.blit(entity.vampire.ent,entity.vampire.startlocation)
+            self.window.blit(entity.vampire.ent,entity.vampire.position)
+
             pygame.display.flip()
 
 
