@@ -42,10 +42,11 @@ class Game:
     def __init__(self):
         self.width = 1280
         self.height = 720
-        self.window = pygame.display.set_mode((self.width, self.height))
+        self.display = pygame.display.set_mode((self.width, self.height))
 
         self.bg = (255, 255, 255)
         self.running = True
+        self.level = Tilemap("map.tmj")
 
     def charmovement(self,event):
         if event.type==pygame.KEYDOWN:
@@ -75,6 +76,7 @@ class Game:
 
 
             self.window.fill(self.bg)
+            self.level.render(self.display)
             self.window.blit(entity.vampire.ent,entity.vampire.startlocation)
             pygame.display.flip()
 
