@@ -57,9 +57,6 @@ class Game:
         entity.vampire.velocity[0]=entity.vampire.acceleration*self.keys_x
         entity.vampire.velocity[1]=entity.vampire.acceleration*self.keys_y
 
-
-
-
     def charmovement(self,event):
         if event.type==pygame.KEYDOWN:
             if event.key== pygame.K_DOWN:
