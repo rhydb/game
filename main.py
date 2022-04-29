@@ -51,13 +51,10 @@ class Game:
         self.level = Tilemap("map.tmj")
         self.keys_y = 0
         self.keys_x = 0
+        self.deceleration = 0.8
 
 
-    def entityvelocity(self):
-        entity.vampire.velocity[0]=entity.vampire.acceleration*self.keys_x
-        entity.vampire.velocity[1]=entity.vampire.acceleration*self.keys_y
-
-    def charmovement(self,event):
+    def charinput(self,event):
         if event.type==pygame.KEYDOWN:
             if event.key== pygame.K_DOWN:
                 self.keys_y +=1
@@ -71,23 +68,37 @@ class Game:
         if event.type==pygame.KEYUP:
             if event.key ==pygame.K_LEFT:
                 self.keys_x += 1
-
             if event.key == pygame.K_RIGHT:
                 self.keys_x -= 1
-
             if event.key ==pygame.K_DOWN:
                 self.keys_y -=1
             if event.key == pygame.K_UP:
                 self.keys_y += 1
-        self.entityvelocity()
-
+        self.charactermovement()
 
 
     def input(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-            self.charmovement(event)
+            self.charinput(event)
+
+    def charactermovement(self):
+
+        if entity.vampire.velocity[0] < 10 and entity.vampire.velocity[0] > -10:
+            entity.vampire.velocity[0] += entity.vampire.acceleration * self.keys_x
+        if entity.vampire.velocity[1] < 10 and entity.vampire.velocity[1] > -10:
+            entity.vampire.velocity[1] += entity.vampire.acceleration * self.keys_y
+
+        # deceleration
+        if abs(entity.vampire.velocity[0]) > 1:
+            entity.vampire.velocity[0] = entity.vampire.velocity[0] * self.deceleration
+        else:
+            entity.vampire.velocity[0] = 0
+        if abs(entity.vampire.velocity[1]) > 1:
+            entity.vampire.velocity[1] = entity.vampire.velocity[1] * self.deceleration
+        else:
+            entity.vampire.velocity[1] = 0
 
     def loop(self):
         FPS = 60
@@ -102,8 +113,12 @@ class Game:
             self.display.fill(self.bg)
             self.level.render(self.display)
 
-            self.display.blit(entity.vampire.ent,entity.vampire.position)
-            self.display.blit(entity.vampire.ent,entity.vampire.position)
+            self.charactermovement()
+
+            #displaying every entity
+            for character in entity.entities:
+                self.display.blit(character.ent,character.position)
+
 
             pygame.display.flip()
 
