@@ -56,9 +56,6 @@ class Game:
 
 
     def charmovement(self,event):
-        entity.vampire.position[0]+=entity.vampire.velocity[0]
-        entity.vampire.position[1]+= entity.vampire.velocity[1]
-
         if event.type==pygame.KEYDOWN:
             if event.key== pygame.K_DOWN:
                 self.entityvelocity(entity.vampire,1,entity.vampire.acceleration)
@@ -68,6 +65,7 @@ class Game:
                 self.entityvelocity(entity.vampire,0,entity.vampire.acceleration)
             if event.key== pygame.K_LEFT:
                 self.entityvelocity(entity.vampire,0,-entity.vampire.acceleration)
+
         if event.type==pygame.KEYUP:
             if event.key ==pygame.K_LEFT or event.key ==pygame.K_RIGHT:
                 self.entityvelocity(entity.vampire, 0, 0)
@@ -88,6 +86,9 @@ class Game:
         while self.running:
             clock.tick(FPS)
             self.input()
+
+            entity.vampire.position[0] += entity.vampire.velocity[0]
+            entity.vampire.position[1] += entity.vampire.velocity[1]
 
             self.display.fill(self.bg)
             self.level.render(self.display)
