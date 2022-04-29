@@ -57,25 +57,22 @@ class Game:
 
     def charmovement(self,event):
         entity.vampire.position[0]+=entity.vampire.velocity[0]
-        entity.vampire.position[1] += entity.vampire.velocity[1]
+        entity.vampire.position[1]+= entity.vampire.velocity[1]
 
         if event.type==pygame.KEYDOWN:
             if event.key== pygame.K_DOWN:
-                self.entityvelocity(entity.vampire,0,-entity.vampire.acceleration)
-            if event.key== pygame.K_UP:
                 self.entityvelocity(entity.vampire,1,entity.vampire.acceleration)
+            if event.key== pygame.K_UP:
+                self.entityvelocity(entity.vampire,1,-entity.vampire.acceleration)
             if event.key== pygame.K_RIGHT:
                 self.entityvelocity(entity.vampire,0,entity.vampire.acceleration)
             if event.key== pygame.K_LEFT:
-                self.entityvelocity(entity.vampire,1,-entity.vampire.acceleration)
+                self.entityvelocity(entity.vampire,0,-entity.vampire.acceleration)
         if event.type==pygame.KEYUP:
             if event.key ==pygame.K_LEFT or event.key ==pygame.K_RIGHT:
                 self.entityvelocity(entity.vampire, 0, 0)
-            if event.key ==pygame.K_UP or event.key ==pygame.K_UP:
+            if event.key ==pygame.K_DOWN or event.key ==pygame.K_UP:
                 self.entityvelocity(entity.vampire, 1, 0)
-
-
-
 
 
 
@@ -86,7 +83,6 @@ class Game:
             self.charmovement(event)
 
     def loop(self):
-
         FPS = 60
         clock =pygame.time.Clock()
         while self.running:
@@ -96,11 +92,10 @@ class Game:
             self.display.fill(self.bg)
             self.level.render(self.display)
 
-            self.display.blit(entity.vampire.ent,entity.vampire.startlocation)
-            self.window.blit(entity.vampire.ent,entity.vampire.position)
+            self.display.blit(entity.vampire.ent,entity.vampire.position)
+            self.display.blit(entity.vampire.ent,entity.vampire.position)
 
             pygame.display.flip()
-
 
 
 
