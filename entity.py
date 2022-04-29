@@ -12,11 +12,10 @@ class entity():
 
 
 
-
-
 entities=[]
 
-vampire = entity("Theguy.png",[0,0],10)
+vampire = entity("Theguy.png",[0,0],3)
+
 
 
 if __name__ ==("__main__"):

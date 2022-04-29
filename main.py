@@ -18,6 +18,8 @@ class Tilemap:
             self.th= tile_set_info["tileheight"]
             self.image = pygame.image.load(tile_set_info["image"])
             self.image_rect = self.image.get_rect()
+
+
             for y in range(0, self.image_rect.h, self.th):
                 for x in range(0, self.image_rect.w ,self.tw):
                     tile = pygame.Surface((self.tw, self.th))
@@ -47,30 +49,40 @@ class Game:
         self.bg = (255, 255, 255)
         self.running = True
         self.level = Tilemap("map.tmj")
+        self.keys_y = 0
+        self.keys_x = 0
 
 
-    def entityvelocity(self,character,axis,magnitude):
-        #axis 0 = x       1 = y
-        character.velocity[axis]=magnitude
+    def entityvelocity(self):
+        entity.vampire.velocity[0]=entity.vampire.acceleration*self.keys_x
+        entity.vampire.velocity[1]=entity.vampire.acceleration*self.keys_y
+
 
 
 
     def charmovement(self,event):
         if event.type==pygame.KEYDOWN:
             if event.key== pygame.K_DOWN:
-                self.entityvelocity(entity.vampire,1,entity.vampire.acceleration)
+                self.keys_y +=1
             if event.key== pygame.K_UP:
-                self.entityvelocity(entity.vampire,1,-entity.vampire.acceleration)
+                self.keys_y -= 1
             if event.key== pygame.K_RIGHT:
-                self.entityvelocity(entity.vampire,0,entity.vampire.acceleration)
+                self.keys_x += 1
             if event.key== pygame.K_LEFT:
-                self.entityvelocity(entity.vampire,0,-entity.vampire.acceleration)
+                self.keys_x -=1
 
         if event.type==pygame.KEYUP:
-            if event.key ==pygame.K_LEFT or event.key ==pygame.K_RIGHT:
-                self.entityvelocity(entity.vampire, 0, 0)
-            if event.key ==pygame.K_DOWN or event.key ==pygame.K_UP:
-                self.entityvelocity(entity.vampire, 1, 0)
+            if event.key ==pygame.K_LEFT:
+                self.keys_x += 1
+
+            if event.key == pygame.K_RIGHT:
+                self.keys_x -= 1
+
+            if event.key ==pygame.K_DOWN:
+                self.keys_y -=1
+            if event.key == pygame.K_UP:
+                self.keys_y += 1
+        self.entityvelocity()
 
 
 
