@@ -46,7 +46,7 @@ class Game:
         self.height = 720
         self.display = pygame.display.set_mode((self.width, self.height))
 
-        self.bg = (255, 255, 255)
+        self.bg = (200, 200, 200)
         self.running = True
         self.level = Tilemap("map.tmj")
         self.keys_y = 0
@@ -74,7 +74,9 @@ class Game:
                 self.keys_y -=1
             if event.key == pygame.K_UP:
                 self.keys_y += 1
-        self.charactermovement()
+
+
+
 
 
     def input(self):
@@ -83,12 +85,22 @@ class Game:
                 self.running = False
             self.charinput(event)
 
-    def charactermovement(self):
+    def charactermovement(self,entities):
+        for i in entities:
+            if i.velocity[0] < 10 and i.velocity[0] > -10:
+                i.velocity[0] += i.acceleration * self.keys_x
+            if i.velocity[1] < 10 and i.velocity[1] > -10:
+                i.velocity[1] += i.acceleration * self.keys_y
 
-        if entity.vampire.velocity[0] < 10 and entity.vampire.velocity[0] > -10:
-            entity.vampire.velocity[0] += entity.vampire.acceleration * self.keys_x
-        if entity.vampire.velocity[1] < 10 and entity.vampire.velocity[1] > -10:
-            entity.vampire.velocity[1] += entity.vampire.acceleration * self.keys_y
+            if i.velocity[0] <0 and i.lookleft ==False:
+                i.ent=pygame.transform.flip(i.ent,True,False)
+                i.lookleft=True
+            if i.velocity[0] >0 and i.lookleft ==True:
+                i.ent = pygame.transform.flip(i.ent, True, False)
+                i.lookleft = False
+
+
+
 
         # deceleration
         if abs(entity.vampire.velocity[0]) > 1:
@@ -113,7 +125,7 @@ class Game:
             self.display.fill(self.bg)
             self.level.render(self.display)
 
-            self.charactermovement()
+            self.charactermovement(entity.entities)
 
             #displaying every entity
             for character in entity.entities:
