@@ -78,7 +78,6 @@ class Game:
 
 
 
-
     def input(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -86,20 +85,20 @@ class Game:
             self.charinput(event)
 
     def charactermovement(self,entities):
+        #acceleration by input
         for i in entities:
             if i.velocity[0] < 10 and i.velocity[0] > -10:
                 i.velocity[0] += i.acceleration * self.keys_x
             if i.velocity[1] < 10 and i.velocity[1] > -10:
                 i.velocity[1] += i.acceleration * self.keys_y
 
+            #flipping
             if i.velocity[0] <0 and i.lookleft ==False:
                 i.ent=pygame.transform.flip(i.ent,True,False)
                 i.lookleft=True
             if i.velocity[0] >0 and i.lookleft ==True:
                 i.ent = pygame.transform.flip(i.ent, True, False)
                 i.lookleft = False
-
-
 
 
         # deceleration
@@ -111,6 +110,25 @@ class Game:
             entity.vampire.velocity[1] = entity.vampire.velocity[1] * self.deceleration
         else:
             entity.vampire.velocity[1] = 0
+
+
+
+    def windowcolission(self):
+        for i in entity.entities:
+            if i.position[0] + i.size>=self.width:
+                i.velocity[0]*=-1
+            if i.position[0]<=0:
+                i.velocity[0]*=-1
+
+            if i.position[1] + i.size>=self.height:
+                i.velocity[1]*=-1
+            if i.position[1]<=0:
+                i.velocity[1]*=0-1
+
+
+
+
+
 
     def loop(self):
         FPS = 60
@@ -126,6 +144,7 @@ class Game:
             self.level.render(self.display)
 
             self.charactermovement(entity.entities)
+            self.windowcolission()
 
             #displaying every entity
             for character in entity.entities:
