@@ -51,7 +51,7 @@ class Game:
         self.level = Tilemap("map.tmj")
         self.keys_y = 0
         self.keys_x = 0
-        self.deceleration = 0.8
+        self.deceleration = 0.9
 
 
     def charinput(self,event):
@@ -87,9 +87,9 @@ class Game:
     def charactermovement(self,entities):
         #acceleration by input
         for i in entities:
-            if i.velocity[0] < 10 and i.velocity[0] > -10:
+            if i.velocity[0] < 5 and i.velocity[0] > -5:
                 i.velocity[0] += i.acceleration * self.keys_x
-            if i.velocity[1] < 10 and i.velocity[1] > -10:
+            if i.velocity[1] < 5 and i.velocity[1] > -5:
                 i.velocity[1] += i.acceleration * self.keys_y
 
             #flipping
@@ -102,11 +102,11 @@ class Game:
 
 
         # deceleration
-        if abs(entity.vampire.velocity[0]) > 1:
+        if abs(entity.vampire.velocity[0]) > 0.5:
             entity.vampire.velocity[0] = entity.vampire.velocity[0] * self.deceleration
         else:
             entity.vampire.velocity[0] = 0
-        if abs(entity.vampire.velocity[1]) > 1:
+        if abs(entity.vampire.velocity[1]) > 0.5:
             entity.vampire.velocity[1] = entity.vampire.velocity[1] * self.deceleration
         else:
             entity.vampire.velocity[1] = 0
@@ -115,15 +115,16 @@ class Game:
 
     def windowcolission(self):
         for i in entity.entities:
-            if i.position[0] + i.size>=self.width:
-                i.velocity[0]*=-1
-            if i.position[0]<=0:
-                i.velocity[0]*=-1
+            if i.position[0] + i.size>self.width:
+                i.velocity[0]=abs(i.velocity[0])*-0.1
+            if i.position[0]<0:
+                i.velocity[0] = -abs(i.velocity[0]) * -0.1
 
-            if i.position[1] + i.size>=self.height:
-                i.velocity[1]*=-1
-            if i.position[1]<=0:
-                i.velocity[1]*=0-1
+            if i.position[1] + i.size>self.height:
+                i.velocity[1]=abs(i.velocity[1])*-0.1
+            if i.position[1]<0:
+                i.velocity[1]=-abs(i.velocity[1])*-0.1
+
 
 
 
@@ -145,6 +146,7 @@ class Game:
 
             self.charactermovement(entity.entities)
             self.windowcolission()
+
 
             #displaying every entity
             for character in entity.entities:

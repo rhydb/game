@@ -3,7 +3,7 @@ import os
 
 class entity():
     def __init__(self,imagedirec,startlocal,acceleration ):
-        self.size=32
+        self.size=48
         self.ent=pygame.image.load(os.path.join("Assets",imagedirec))
         self.ent=pygame.transform.scale(self.ent,(self.size,self.size))
         self.entfliped=pygame.transform.flip(self.ent, True, False)
@@ -18,7 +18,7 @@ class entity():
 global entities
 entities=[]
 
-vampire = entity("Theguy.png",[1,1],2)
+vampire = entity("Theguy.png",[1,1],10)
 #yomumma =entity("Theguy.png",[100,100],10)
 
 
