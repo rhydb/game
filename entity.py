@@ -15,10 +15,6 @@ class entity():
 
 
 
-global entities
-entities=[]
-
-vampire = entity("Theguy.png",[1,1],10)
 #yomumma =entity("Theguy.png",[100,100],10)
 
 

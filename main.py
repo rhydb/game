@@ -53,6 +53,9 @@ class Game:
         self.keys_x = 0
         self.deceleration = 0.9
 
+        self.entities = []
+
+        vampire = entity("Theguy.png", [1, 1], 10)
 
     def charinput(self,event):
         if event.type==pygame.KEYDOWN:
@@ -101,13 +104,13 @@ class Game:
                 i.lookleft = False
 
 
-        # deceleration
+        #
         if abs(entity.vampire.velocity[0]) > 0.5:
-            entity.vampire.velocity[0] = entity.vampire.velocity[0] * self.deceleration
+            entity.vampire.velocity[0] = entity.vampire.velocity[0] * self.
         else:
             entity.vampire.velocity[0] = 0
         if abs(entity.vampire.velocity[1]) > 0.5:
-            entity.vampire.velocity[1] = entity.vampire.velocity[1] * self.deceleration
+            entity.vampire.velocity[1] = entity.vampire.velocity[1] * self.
         else:
             entity.vampire.velocity[1] = 0
 
