@@ -11,15 +11,3 @@ class entity():
         self.acceleration=acceleration
         self.velocity=[0,0]
         self.lookleft=False
-        entities.append(self)
-
-
-
-#yomumma =entity("Theguy.png",[100,100],10)
-
-
-
-
-if __name__ ==("__main__"):
-    print("hello")
-
