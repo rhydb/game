@@ -14,9 +14,7 @@ class Game:
         self.keys_x = 0
         self.deceleration = 0.9
 
-        self.entities = []
 
-        vampire = entity("Theguy.png", [1, 1], 10)
 
     def charinput(self,event):
         if event.type==pygame.KEYDOWN:
@@ -66,25 +64,25 @@ class Game:
 
 
         #
-        if abs(entity.vampire.velocity[0]) > 0.5:
-            entity.vampire.velocity[0] = entity.vampire.velocity[0] * self.deceleration
+        if abs(game.vampire.velocity[0]) > 0.5:
+            game.vampire.velocity[0] = game.vampire.velocity[0] * self.deceleration
         else:
-            entity.vampire.velocity[0] = 0
-        if abs(entity.vampire.velocity[1]) > 0.5:
-            entity.vampire.velocity[1] = entity.vampire.velocity[1] * self.deceleration
+            game.vampire.velocity[0] = 0
+        if abs(game.vampire.velocity[1]) > 0.5:
+            game.vampire.velocity[1] = game.vampire.velocity[1] * self.deceleration
         else:
-            entity.vampire.velocity[1] = 0
+            game.vampire.velocity[1] = 0
 
 
 
     def windowcolission(self):
-        for i in entity.entities:
-            if i.position[0] + i.size>self.width:
+        for i in game.entities:
+            if i.position[0] + i.size > game.WINDOW_WIDTH:
                 i.velocity[0]=abs(i.velocity[0])*-0.1
             if i.position[0]<0:
                 i.velocity[0] = -abs(i.velocity[0]) * -0.1
 
-            if i.position[1] + i.size>self.height:
+            if i.position[1] + i.size > game.WINDOW_HEIGHT:
                 i.velocity[1]=abs(i.velocity[1])*-0.1
             if i.position[1]<0:
                 i.velocity[1]=-abs(i.velocity[1])*-0.1
@@ -102,18 +100,18 @@ class Game:
             clock.tick(FPS)
             self.input()
 
-            entity.vampire.position[0] += entity.vampire.velocity[0]
-            entity.vampire.position[1] += entity.vampire.velocity[1]
+            game.vampire.position[0] += game.vampire.velocity[0]
+            game.vampire.position[1] += game.vampire.velocity[1]
 
             game.display.fill(self.bg)
             self.level.render()
 
-            self.charactermovement(entity.entities)
+            self.charactermovement(game.entities)
             self.windowcolission()
 
 
             #displaying every entity
-            for character in entity.entities:
+            for character in game.entities:
                 game.display.blit(character.ent,character.position)
 
 
