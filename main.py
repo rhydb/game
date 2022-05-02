@@ -45,9 +45,9 @@ class Game:
         # acceleration by input
         for i in entities:
             if i.velocity[0] < 5 and i.velocity[0] > -5:
-                i.velocity[0] += i.acceleration * self.keys_x
+                i.velocity[0] += i.acceleration * self.keys_x * game.dt
             if i.velocity[1] < 5 and i.velocity[1] > -5:
-                i.velocity[1] += i.acceleration * self.keys_y
+                i.velocity[1] += i.acceleration * self.keys_y * game.dt
 
             # flipping
             if i.velocity[0] < 0 and i.lookleft == False:
@@ -57,15 +57,17 @@ class Game:
                 i.ent = pygame.transform.flip(i.ent, True, False)
                 i.lookleft = False
 
-        #
         if abs(game.vampire.velocity[0]) > 0.5:
-            game.vampire.velocity[0] = game.vampire.velocity[0] * self.deceleration
+            game.vampire.velocity[0] = game.vampire.velocity[0] * self.deceleration * game.dt
         else:
             game.vampire.velocity[0] = 0
         if abs(game.vampire.velocity[1]) > 0.5:
-            game.vampire.velocity[1] = game.vampire.velocity[1] * self.deceleration
+            game.vampire.velocity[1] = game.vampire.velocity[1] * self.deceleration * game.dt
         else:
             game.vampire.velocity[1] = 0
+
+        game.vampire.position[0] += game.vampire.velocity[0] * game.dt
+        game.vampire.position[1] += game.vampire.velocity[1] * game.dt
 
     def windowcolission(self):
         for i in game.entities:
@@ -83,11 +85,9 @@ class Game:
         FPS = 60
         clock = pygame.time.Clock()
         while self.running:
-            clock.tick(FPS)
+            game.dt = clock.tick(FPS) / 1000
             self.input()
 
-            game.vampire.position[0] += game.vampire.velocity[0]
-            game.vampire.position[1] += game.vampire.velocity[1]
 
             game.display.fill(self.bg)
             self.level.render()
