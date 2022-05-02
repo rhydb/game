@@ -1,13 +1,11 @@
+import game
 import pygame
-import entity
+from entity import entity
 from Tilemap import Tilemap
 
 
 class Game:
     def __init__(self):
-        self.width = 1280
-        self.height = 720
-        self.display = pygame.display.set_mode((self.width, self.height))
 
         self.bg = (200, 200, 200)
         self.running = True
@@ -69,11 +67,11 @@ class Game:
 
         #
         if abs(entity.vampire.velocity[0]) > 0.5:
-            entity.vampire.velocity[0] = entity.vampire.velocity[0] * self.
+            entity.vampire.velocity[0] = entity.vampire.velocity[0] * self.deceleration
         else:
             entity.vampire.velocity[0] = 0
         if abs(entity.vampire.velocity[1]) > 0.5:
-            entity.vampire.velocity[1] = entity.vampire.velocity[1] * self.
+            entity.vampire.velocity[1] = entity.vampire.velocity[1] * self.deceleration
         else:
             entity.vampire.velocity[1] = 0
 
@@ -107,8 +105,8 @@ class Game:
             entity.vampire.position[0] += entity.vampire.velocity[0]
             entity.vampire.position[1] += entity.vampire.velocity[1]
 
-            self.display.fill(self.bg)
-            self.level.render(self.display)
+            game.display.fill(self.bg)
+            self.level.render()
 
             self.charactermovement(entity.entities)
             self.windowcolission()
@@ -116,7 +114,7 @@ class Game:
 
             #displaying every entity
             for character in entity.entities:
-                self.display.blit(character.ent,character.position)
+                game.display.blit(character.ent,character.position)
 
 
             pygame.display.flip()

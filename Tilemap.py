@@ -1,3 +1,4 @@
+import game
 import pygame
 import json
 
@@ -26,7 +27,7 @@ class Tilemap:
                     self.tiles.append(tile)
 
 
-    def render(self, display):
+    def render(self):
         for i, index in enumerate(self.tile_set):
             if index == 0:
                 continue
@@ -34,4 +35,4 @@ class Tilemap:
             x = (i % self.width) * self.tw
             y = (i // self.width) * self.th
             tile = self.tiles[index]
-            display.blit(tile, (x, y), (0, 0, self.tw, self.th))
+            game.display.blit(tile, (x, y), (0, 0, self.tw, self.th))
