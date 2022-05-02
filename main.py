@@ -57,14 +57,16 @@ class Game:
                 i.ent = pygame.transform.flip(i.ent, True, False)
                 i.lookleft = False
 
-        if abs(game.vampire.velocity[0]) > 0.5:
-            game.vampire.velocity[0] = game.vampire.velocity[0] * self.deceleration * game.dt
-        else:
-            game.vampire.velocity[0] = 0
-        if abs(game.vampire.velocity[1]) > 0.5:
-            game.vampire.velocity[1] = game.vampire.velocity[1] * self.deceleration * game.dt
-        else:
-            game.vampire.velocity[1] = 0
+        if self.keys_x == 0:
+            if abs(game.vampire.velocity[0]) > 0.5:
+                game.vampire.velocity[0] = game.vampire.velocity[0] * self.deceleration * game.dt
+            else:
+                game.vampire.velocity[0] = 0
+        if self.keys_y == 0:
+            if abs(game.vampire.velocity[1]) > 0.5:
+                game.vampire.velocity[1] = game.vampire.velocity[1] * self.deceleration * game.dt
+            else:
+                game.vampire.velocity[1] = 0
 
         game.vampire.position[0] += game.vampire.velocity[0] * game.dt
         game.vampire.position[1] += game.vampire.velocity[1] * game.dt
