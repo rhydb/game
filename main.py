@@ -85,7 +85,7 @@ class Game:
     def loop(self):
         clock = pygame.time.Clock()
         while self.running:
-            game.dt = clock.tick(FPS) / 1000
+            game.dt = clock.tick(game.FPS) / 1000
             self.input()
 
 
