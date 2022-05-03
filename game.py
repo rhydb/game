@@ -1,6 +1,6 @@
 import pygame
 from pygame.math import Vector2
-from entity import entity
+from entity import Entity
 
 FPS = 60
 WINDOW_WIDTH = 1280
