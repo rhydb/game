@@ -9,5 +9,5 @@ display = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
 entities = []
 
-vampire = entity("Theguy.png", (1, 1), Vector2(500))
+vampire = entity("Theguy.png", (1, 1), 500)
 entities.append(vampire)
