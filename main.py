@@ -98,8 +98,9 @@ class Game:
             self.windowcolission()
 
             # displaying every entity
-            for character in game.entities:
-                game.display.blit(character.ent, character.position)
+            for entity in game.entities:
+                game.display.blit(entity.ent, entity.position)
+            game.display.blit(game.vampire.ent, game.vampire.position)
 
             pygame.display.flip()
 
