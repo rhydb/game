@@ -2,6 +2,7 @@ import pygame
 from pygame.math import Vector2
 from entity import entity
 
+FPS = 60
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 dt = 0
@@ -9,5 +10,5 @@ display = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
 entities = []
 
-vampire = entity("Theguy.png", (1, 1), 500)
+vampire = entity("Theguy.png", (1, 1), 5000)
 entities.append(vampire)

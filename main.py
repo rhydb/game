@@ -83,7 +83,6 @@ class Game:
                 i.velocity.y = -abs(i.velocity.y) * -0.1
 
     def loop(self):
-        FPS = 60
         clock = pygame.time.Clock()
         while self.running:
             game.dt = clock.tick(FPS) / 1000
