@@ -11,6 +11,7 @@ class Tilemap:
             data = json.load(f)
             self.tile_set = data["layers"][0]["data"]
             self.width = data["layers"][0]["width"]
+            self.height = data["layers"][0]["height"]
 
             tile_set_info = data["tilesets"][0]
             self.columns = tile_set_info["columns"]

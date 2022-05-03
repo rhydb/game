@@ -96,11 +96,23 @@ class Game:
 
             self.charactermovement(game.entities)
             self.windowcolission()
+            
+            box_colour = (0, 0, 255)
+            # only checks top left corner
+            tile_x = int(game.vampire.position.x // self.level.tw)
+            tile_y = int(game.vampire.position.y // self.level.th)
+            if tile_x < self.level.width and tile_y < self.level.height:
+                tile_index = tile_x + tile_y * self.level.width
+                if self.level.tile_set[tile_index] != 0:
+                    box_colour = (0, 255, 255)
 
             # displaying every entity
             for entity in game.entities:
                 game.display.blit(entity.ent, entity.position)
             game.display.blit(game.vampire.ent, game.vampire.position)
+
+            # DEBUG
+            pygame.draw.rect(game.display, box_colour, (*game.vampire.position, game.vampire.ent.get_width(), game.vampire.ent.get_height()), 1)
 
             pygame.display.flip()
 
