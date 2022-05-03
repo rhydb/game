@@ -3,7 +3,7 @@ from pygame.math import Vector2
 import os
 
 
-class entity():
+class Entity():
     def __init__(self, imagedirec, position, acceleration):
         self.size = 48
         self.ent = pygame.image.load(os.path.join("Assets", imagedirec))

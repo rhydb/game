@@ -1,6 +1,6 @@
 import game
 import pygame
-from entity import entity
+from entity import Entity
 from Tilemap import Tilemap
 
 
