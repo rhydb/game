@@ -10,4 +10,4 @@ display = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
 entities = []
 
-vampire = entity("Theguy.png", (1, 1), 5000)
+vampire = Entity("Theguy.png", (1, 1), 5000)
