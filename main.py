@@ -44,44 +44,44 @@ class Game:
     def charactermovement(self, entities):
         # acceleration by input
         for i in entities:
-            if i.velocity[0] < 5 and i.velocity[0] > -5:
-                i.velocity[0] += i.acceleration * self.keys_x * game.dt
-            if i.velocity[1] < 5 and i.velocity[1] > -5:
-                i.velocity[1] += i.acceleration * self.keys_y * game.dt
+            if i.velocity.x < 5 and i.velocity.x > -5:
+                i.velocity.x += i.acceleration.x * self.keys_x * game.dt
+            if i.velocity.y < 5 and i.velocity.y > -5:
+                i.velocity.y += i.acceleration.y * self.keys_y * game.dt
 
             # flipping
-            if i.velocity[0] < 0 and i.lookleft == False:
+            if i.velocity.x < 0 and i.lookleft == False:
                 i.ent = pygame.transform.flip(i.ent, True, False)
                 i.lookleft = True
-            if i.velocity[0] > 0 and i.lookleft == True:
+            if i.velocity.x > 0 and i.lookleft == True:
                 i.ent = pygame.transform.flip(i.ent, True, False)
                 i.lookleft = False
 
         if self.keys_x == 0:
-            if abs(game.vampire.velocity[0]) > 0.5:
-                game.vampire.velocity[0] = game.vampire.velocity[0] * self.deceleration * game.dt
+            if abs(game.vampire.velocity.x) > 0.5:
+                game.vampire.velocity.x = game.vampire.velocity.x * self.deceleration * game.dt
             else:
-                game.vampire.velocity[0] = 0
+                game.vampire.velocity.x = 0
         if self.keys_y == 0:
-            if abs(game.vampire.velocity[1]) > 0.5:
-                game.vampire.velocity[1] = game.vampire.velocity[1] * self.deceleration * game.dt
+            if abs(game.vampire.velocity.y) > 0.5:
+                game.vampire.velocity.y = game.vampire.velocity.y * self.deceleration * game.dt
             else:
-                game.vampire.velocity[1] = 0
+                game.vampire.velocity.y = 0
 
-        game.vampire.position[0] += game.vampire.velocity[0] * game.dt
-        game.vampire.position[1] += game.vampire.velocity[1] * game.dt
+        game.vampire.position.x += game.vampire.velocity.x * game.dt
+        game.vampire.position.y += game.vampire.velocity.y * game.dt
 
     def windowcolission(self):
         for i in game.entities:
-            if i.position[0] + i.size > game.WINDOW_WIDTH:
-                i.velocity[0] = abs(i.velocity[0]) * -0.1
-            if i.position[0] < 0:
-                i.velocity[0] = -abs(i.velocity[0]) * -0.1
+            if i.position.x + i.size > game.WINDOW_WIDTH:
+                i.velocity.x = abs(i.velocity.x) * -0.1
+            if i.position.x < 0:
+                i.velocity.x = -abs(i.velocity.x) * -0.1
 
-            if i.position[1] + i.size > game.WINDOW_HEIGHT:
-                i.velocity[1] = abs(i.velocity[1]) * -0.1
-            if i.position[1] < 0:
-                i.velocity[1] = -abs(i.velocity[1]) * -0.1
+            if i.position.y + i.size > game.WINDOW_HEIGHT:
+                i.velocity.y = abs(i.velocity.y) * -0.1
+            if i.position.y < 0:
+                i.velocity.y = -abs(i.velocity.y) * -0.1
 
     def loop(self):
         FPS = 60
