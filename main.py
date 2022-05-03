@@ -43,19 +43,21 @@ class Game:
 
     def charactermovement(self, entities):
         # acceleration by input
-        for i in entities:
-            if i.velocity.x < 5 and i.velocity.x > -5:
-                i.velocity.x += i.acceleration.x * self.keys_x * game.dt
-            if i.velocity.y < 5 and i.velocity.y > -5:
-                i.velocity.y += i.acceleration.y * self.keys_y * game.dt
+        for entity in entities:
+            entity.position += entity.velocity * game.dt
 
-            # flipping
-            if i.velocity.x < 0 and i.lookleft == False:
-                i.ent = pygame.transform.flip(i.ent, True, False)
-                i.lookleft = True
-            if i.velocity.x > 0 and i.lookleft == True:
-                i.ent = pygame.transform.flip(i.ent, True, False)
-                i.lookleft = False
+        if 5 > game.vampire.velocity.x > -5:
+            game.vampire.velocity.x += game.vampire.acceleration.x * self.keys_x * game.dt
+        if 5 > game.vampire.velocity.y > -5:
+            game.vampire.velocity.y += game.vampire.acceleration.y * self.keys_y * game.dt
+
+        # flipping
+        if game.vampire.velocity.x < 0 and game.vampire.lookleft == False:
+            game.vampire.ent = pygame.transform.flip(game.vampire.ent, True, False)
+            game.vampire.lookleft = True
+        if game.vampire.velocity.x > 0 and game.vampire.lookleft == True:
+            game.vampire.ent = pygame.transform.flip(game.vampire.ent, True, False)
+            game.vampire.lookleft = False
 
         if self.keys_x == 0:
             if abs(game.vampire.velocity.x) > 0.5:
