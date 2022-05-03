@@ -68,8 +68,7 @@ class Game:
             else:
                 game.vampire.velocity.y = 0
 
-        game.vampire.position.x += game.vampire.velocity.x * game.dt
-        game.vampire.position.y += game.vampire.velocity.y * game.dt
+        game.vampire.position += game.vampire.velocity * game.dt
 
     def windowcolission(self):
         for i in game.entities:
