@@ -17,13 +17,14 @@ class Game:
         self.keys_y = 0
         self.keys_x = 0
         self.deceleration = 10  # percentage decrease
+        self.gravity = 9
 
     def charinput(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_DOWN:
                 self.keys_y += 1
-            if event.key == pygame.K_UP:
-                self.keys_y -= 1
+            if event.key == pygame.K_UP and game.vampire.grounded==True:
+                game.vampire.velocity.y+=-500
             if event.key == pygame.K_RIGHT:
                 self.keys_x += 1
             if event.key == pygame.K_LEFT:
@@ -34,10 +35,8 @@ class Game:
                 self.keys_x += 1
             if event.key == pygame.K_RIGHT:
                 self.keys_x -= 1
-            if event.key == pygame.K_DOWN:
-                self.keys_y -= 1
-            if event.key == pygame.K_UP:
-                self.keys_y += 1
+
+
 
     def input(self):
         for event in pygame.event.get():
@@ -76,6 +75,11 @@ class Game:
             else:
                 game.vampire.velocity.y = 0
 
+        if  game.vampire.grounded==False:
+            game.vampire.velocity.y += self.gravity
+
+
+
         self.resolve_tile_collision(game.vampire)
 
     def resolve_tile_collision(self, entity):
@@ -98,6 +102,7 @@ class Game:
             next_y = self.get_tile_xy_at(entity.position.x,
                                          entity.position.y + self.level.th // 2).y + (self.level.th - entity.size)
             entity.grounded = True
+            entity.velocity.y=0
         else:
             entity.grounded = False
         entity.position.xy = next_x, next_y
