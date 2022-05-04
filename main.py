@@ -1,5 +1,8 @@
+from functools import reduce
+
 import game
 import pygame
+from pygame.math import Vector2
 from entity import Entity
 from Tilemap import Tilemap
 
@@ -12,7 +15,7 @@ class Game:
         self.level = Tilemap("map.tmj")
         self.keys_y = 0
         self.keys_x = 0
-        self.deceleration = 0.9
+        self.deceleration = 10  # percentage decrease
 
     def charinput(self, event):
         if event.type == pygame.KEYDOWN:
@@ -46,9 +49,10 @@ class Game:
         for entity in entities:
             entity.position += entity.velocity * game.dt
 
-        if 5 > game.vampire.velocity.x > -5:
+        max_vel = Vector2(500)
+        if abs(game.vampire.velocity.x) < max_vel.x:
             game.vampire.velocity.x += game.vampire.acceleration.x * self.keys_x * game.dt
-        if 5 > game.vampire.velocity.y > -5:
+        if abs(game.vampire.velocity.y) < max_vel.y:
             game.vampire.velocity.y += game.vampire.acceleration.y * self.keys_y * game.dt
 
         # flipping
@@ -59,18 +63,30 @@ class Game:
             game.vampire.ent = pygame.transform.flip(game.vampire.ent, True, False)
             game.vampire.lookleft = False
 
+        self.minspeed = 5
         if self.keys_x == 0:
-            if abs(game.vampire.velocity.x) > 0.5:
-                game.vampire.velocity.x = game.vampire.velocity.x * self.deceleration * game.dt
+            if abs(game.vampire.velocity.x) > self.minspeed:
+                game.vampire.velocity.x -= game.vampire.velocity.x * self.deceleration * game.dt
             else:
                 game.vampire.velocity.x = 0
         if self.keys_y == 0:
-            if abs(game.vampire.velocity.y) > 0.5:
-                game.vampire.velocity.y = game.vampire.velocity.y * self.deceleration * game.dt
+            if abs(game.vampire.velocity.y) > self.minspeed:
+                game.vampire.velocity.y -= game.vampire.velocity.y * self.deceleration * game.dt
             else:
                 game.vampire.velocity.y = 0
 
-        game.vampire.position += game.vampire.velocity * game.dt
+        new_pos = game.vampire.position
+        new_pos.x += game.vampire.velocity.x * game.dt
+        collisions = self.tile_collision(new_pos, game.vampire.size)
+        if collisions["tl"] or collisions["bl"]:
+            new_pos.x = self.get_tile_xy_at(*game.vampire.position.xy).x
+        new_pos.y += game.vampire.velocity.y * game.dt
+        game.vampire.position = new_pos
+
+    def get_tile_xy_at(self, x, y):
+        tile_x = int(x // self.level.tw) * self.level.tw
+        tile_y = int(y // self.level.th) * self.level.th
+        return Vector2(tile_x, tile_y)
 
     def windowcolission(self):
         for i in game.entities:
@@ -84,36 +100,42 @@ class Game:
             if i.position.y < 0:
                 i.velocity.y = -abs(i.velocity.y) * -0.1
 
+    def tile_collision(self, position: Vector2, size: int):
+        return {
+            "tl": self.get_tile_at(*position.xy) > 0,
+            "tr": self.get_tile_at(position.x + size,
+                                   position.y) > 0,
+            "bl": self.get_tile_at(position.x,
+                                   position.y + size) > 0,
+            "br": self.get_tile_at(position.x + size,
+                                   position.y + size) > 0
+        }
+
+    def get_tile_at(self, x, y):
+        tile_x = int(x // self.level.tw)
+        tile_y = int(y // self.level.th)
+        if 0 <= tile_x < self.level.width and 0 <= tile_y < self.level.height:
+            tile_index = tile_x + tile_y * self.level.width
+            return self.level.tile_set[tile_index]
+        return -1
+
     def loop(self):
         clock = pygame.time.Clock()
         while self.running:
             game.dt = clock.tick(game.FPS) / 1000
             self.input()
 
-
             game.display.fill(self.bg)
             self.level.render()
 
             self.charactermovement(game.entities)
             self.windowcolission()
-            
-            box_colour = (0, 0, 255)
-            # only checks top left corner
-            tile_x = int(game.vampire.position.x // self.level.tw)
-            tile_y = int(game.vampire.position.y // self.level.th)
-            if tile_x < self.level.width and tile_y < self.level.height:
-                tile_index = tile_x + tile_y * self.level.width
-                if self.level.tile_set[tile_index] != 0:
-                    box_colour = (0, 255, 255)
 
             # displaying every entity
             for entity in game.entities:
                 game.display.blit(entity.ent, entity.position)
             game.display.blit(game.vampire.ent, game.vampire.position)
-
-            # DEBUG
-            pygame.draw.rect(game.display, box_colour, (*game.vampire.position, game.vampire.ent.get_width(), game.vampire.ent.get_height()), 1)
-
+            pygame.draw.rect(game.display, (255, 0, 0), (*game.vampire.position.xy, game.vampire.size, game.vampire.size), 1)
             pygame.display.flip()
 
 
