@@ -18,6 +18,7 @@ class Game:
         self.keys_x = 0
         self.deceleration = 10  # percentage decrease
         self.gravity = 4000
+        self.bounce=0.3
 
     def charinput(self, event):
         if event.type == pygame.KEYDOWN:
@@ -112,16 +113,20 @@ class Game:
         return Vector2(tile_x, tile_y)
 
     def windowcolission(self):
-        for i in game.entities:
+        for i in [game.vampire]:
+            #right side
             if i.position.x + i.size > game.WINDOW_WIDTH:
+                i.position.x+=self.bounce
                 i.velocity.x = abs(i.velocity.x) * -0.1
+            #left side
             if i.position.x < 0:
                 i.velocity.x = -abs(i.velocity.x) * -0.1
+                i.position.x +=self.bounce
 
-            if i.position.y + i.size > game.WINDOW_HEIGHT:
-                i.velocity.y = abs(i.velocity.y) * -0.1
+            #top side
             if i.position.y < 0:
                 i.velocity.y = -abs(i.velocity.y) * -0.1
+                i.position.x += self.bounce
 
     def tile_collision(self, position: Vector2, size: int):
         return {
