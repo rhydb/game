@@ -1,3 +1,4 @@
+import copy
 from functools import reduce
 
 import game
@@ -75,13 +76,32 @@ class Game:
             else:
                 game.vampire.velocity.y = 0
 
-        new_pos = game.vampire.position
-        new_pos.x += game.vampire.velocity.x * game.dt
-        collisions = self.tile_collision(new_pos, game.vampire.size)
-        if collisions["tl"] or collisions["bl"]:
-            new_pos.x = self.get_tile_xy_at(*game.vampire.position.xy).x
-        new_pos.y += game.vampire.velocity.y * game.dt
-        game.vampire.position = new_pos
+        self.resolve_tile_collision(game.vampire)
+
+    def resolve_tile_collision(self, entity):
+        next_x = entity.position.x + entity.velocity.x * game.dt
+        collisions = self.tile_collision(Vector2(next_x, entity.position.y), entity.size)
+        if collisions["tl"] or collisions["bl"] and not entity.grounded:
+            next_x = self.get_tile_xy_at(*entity.position.xy).x
+            entity.velocity.x = 0
+        if collisions["tr"] or collisions["br"] and not entity.grounded:
+            next_x = self.get_tile_xy_at(entity.position.x + self.level.tw // 2,
+                                         entity.position.y).x - 1 + (self.level.tw - entity.size)
+            entity.velocity.x = 0
+
+        next_y = game.vampire.position.y + entity.velocity.y * game.dt
+        collision = self.tile_collision(Vector2(entity.position.x, next_y), entity.size)
+        if collision["tl"] or collision["tr"]:
+            next_y = self.get_tile_xy_at(*entity.position.xy).y
+            game.vampire.velocity.y = 0
+        if collision["bl"]  or collision["br"]:
+            next_y = self.get_tile_xy_at(entity.position.x,
+                                         entity.position.y + self.level.th // 2).y + (self.level.th - entity.size)
+            entity.grounded = True
+        else:
+            entity.grounded = False
+        entity.position.xy = next_x, next_y
+
 
     def get_tile_xy_at(self, x, y):
         tile_x = int(x // self.level.tw) * self.level.tw
