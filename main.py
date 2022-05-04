@@ -82,16 +82,6 @@ class Game:
         self.resolve_tile_collision(game.vampire)
 
     def resolve_tile_collision(self, entity):
-        next_x = entity.position.x + entity.velocity.x * game.dt
-        collisions = self.tile_collision(Vector2(next_x, entity.position.y), entity.size)
-        if collisions["tl"] or collisions["bl"] and not entity.grounded:
-            next_x = self.get_tile_xy_at(*entity.position.xy).x
-            entity.velocity.x = 0
-        if collisions["tr"] or collisions["br"] and not entity.grounded:
-            next_x = self.get_tile_xy_at(entity.position.x + self.level.tw // 2,
-                                         entity.position.y).x - 1 + (self.level.tw - entity.size)
-            entity.velocity.x = 0
-
         next_y = game.vampire.position.y + entity.velocity.y * game.dt
         collision = self.tile_collision(Vector2(entity.position.x, next_y), entity.size)
         if collision["tl"] or collision["tr"]:
@@ -104,6 +94,15 @@ class Game:
             entity.velocity.y=0
         else:
             entity.grounded = False
+        next_x = entity.position.x + entity.velocity.x * game.dt
+        collisions = self.tile_collision(Vector2(next_x, entity.position.y), entity.size)
+        if collisions["tl"] or collisions["bl"] and not entity.grounded:
+            next_x = self.get_tile_xy_at(*entity.position.xy).x
+            entity.velocity.x = 0
+        if collisions["tr"] or collisions["br"] and not entity.grounded:
+            next_x = self.get_tile_xy_at(entity.position.x + self.level.tw // 2,
+                                         entity.position.y).x - 1 + (self.level.tw - entity.size)
+            entity.velocity.x = 0
         entity.position.xy = next_x, next_y
 
 
