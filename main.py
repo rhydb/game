@@ -116,17 +116,20 @@ class Game:
         for i in [game.vampire]:
             #right side
             if i.position.x + i.size > game.WINDOW_WIDTH:
-                i.position.x+=self.bounce
+                i.position.x -= self.bounce
                 i.velocity.x = abs(i.velocity.x) * -0.1
             #left side
             if i.position.x < 0:
                 i.velocity.x = -abs(i.velocity.x) * -0.1
-                i.position.x +=self.bounce
-
+                i.position.x += self.bounce
             #top side
             if i.position.y < 0:
                 i.velocity.y = -abs(i.velocity.y) * -0.1
-                i.position.x += self.bounce
+                i.position.y += self.bounce
+
+
+            if i.position.y+i.size>game.WINDOW_HEIGHT:
+                i.position.xy=(0,0)
 
     def tile_collision(self, position: Vector2, size: int):
         return {
