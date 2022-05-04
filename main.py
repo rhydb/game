@@ -17,14 +17,13 @@ class Game:
         self.keys_y = 0
         self.keys_x = 0
         self.deceleration = 10  # percentage decrease
-        self.gravity = 9
+        self.gravity = 4000
 
     def charinput(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_DOWN:
-                self.keys_y += 1
+
             if event.key == pygame.K_UP and game.vampire.grounded==True:
-                game.vampire.velocity.y+=-500
+                game.vampire.velocity.y+=-1500
             if event.key == pygame.K_RIGHT:
                 self.keys_x += 1
             if event.key == pygame.K_LEFT:
@@ -44,16 +43,15 @@ class Game:
                 self.running = False
             self.charinput(event)
 
-    def charactermovement(self, entities):
+    def charactermovement(self):
         # acceleration by input
-        for entity in entities:
+        for entity in game.entities:
             entity.position += entity.velocity * game.dt
 
-        max_vel = Vector2(500)
+        max_vel = Vector2(300)
         if abs(game.vampire.velocity.x) < max_vel.x:
             game.vampire.velocity.x += game.vampire.acceleration.x * self.keys_x * game.dt
-        if abs(game.vampire.velocity.y) < max_vel.y:
-            game.vampire.velocity.y += game.vampire.acceleration.y * self.keys_y * game.dt
+
 
         # flipping
         if game.vampire.velocity.x < 0 and game.vampire.lookleft == False:
@@ -76,7 +74,7 @@ class Game:
                 game.vampire.velocity.y = 0
 
         if  game.vampire.grounded==False:
-            game.vampire.velocity.y += self.gravity
+            game.vampire.velocity.y += self.gravity* game.dt
 
 
 
@@ -153,7 +151,7 @@ class Game:
             game.display.fill(self.bg)
             self.level.render()
 
-            self.charactermovement(game.entities)
+            self.charactermovement()
             self.windowcolission()
 
             # displaying every entity

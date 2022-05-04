@@ -14,7 +14,7 @@ display = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
 entities = []
 
-vampire = Entity("Theguy.png", (1, 1), 500)
+vampire = Entity("Theguy.png", (1, 1), 1000)
 
 def text(text, pos, colour=(0,0,0), antialias=False):
     surface = font.render(text, antialias, colour)
