@@ -8,3 +8,5 @@ class Player(Entity):
         self.min_speed = 5
         self.name = name
         self.acceleration = Vector2(acceleration)
+        self.deceleration = 10
+        self.gravity = 4000

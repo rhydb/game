@@ -16,9 +16,6 @@ class Game:
         self.level = Tilemap("map.tmj")
         self.keys_y = 0
         self.keys_x = 0
-        self.deceleration = 10  # percentage decrease
-        self.gravity = 4000
-        self.bounce = 0.3
 
     def charinput(self, event):
         if event.type == pygame.KEYDOWN:
@@ -61,17 +58,17 @@ class Game:
 
         if self.keys_x == 0:
             if abs(game.vampire.velocity.x) > game.vampire.min_speed:
-                game.vampire.velocity.x -= game.vampire.velocity.x * self.deceleration * game.dt
+                game.vampire.velocity.x -= game.vampire.velocity.x * game.vampire.deceleration * game.dt
             else:
                 game.vampire.velocity.x = 0
         if self.keys_y == 0:
             if abs(game.vampire.velocity.y) > game.vampire.min_speed:
-                game.vampire.velocity.y -= game.vampire.velocity.y * self.deceleration * game.dt
+                game.vampire.velocity.y -= game.vampire.velocity.y * game.vampire.deceleration * game.dt
             else:
                 game.vampire.velocity.y = 0
 
         if not game.vampire.grounded:
-            game.vampire.velocity.y += self.gravity * game.dt
+            game.vampire.velocity.y += game.vampire.gravity * game.dt
 
         self.resolve_tile_collision(game.vampire)
 
@@ -112,16 +109,16 @@ class Game:
         for i in [game.vampire]:
             # right side
             if i.position.x + i.size > game.WINDOW_WIDTH:
-                i.position.x -= self.bounce
+                i.position.x -= i.bounce
                 i.velocity.x = abs(i.velocity.x) * -0.1
             # left side
             if i.position.x < 0:
                 i.velocity.x = -abs(i.velocity.x) * -0.1
-                i.position.x += self.bounce
+                i.position.x += i.bounce
             # top side
             if i.position.y < 0:
                 i.velocity.y = -abs(i.velocity.y) * -0.1
-                i.position.y += self.bounce
+                i.position.y += i.bounce
 
             if i.position.y + i.size > game.WINDOW_HEIGHT:
                 i.position.xy = (0, 0)
@@ -159,7 +156,7 @@ class Game:
 
             # displaying every entity
             for entity in game.entities:
-                game.display.blit(entity.ent, entity.position)
+                entity.render()
             game.display.blit(game.vampire.ent, game.vampire.position)
             pygame.draw.rect(game.display, (255, 0, 0),
                              (*game.vampire.position.xy, game.vampire.size, game.vampire.size), 1)

@@ -1,4 +1,5 @@
 import pygame
+import game
 from pygame.math import Vector2
 import os
 
@@ -12,3 +13,7 @@ class Entity():
         self.velocity = Vector2(0, 0)
         self.lookleft = False
         self.grounded = False
+        self.bounce = 10
+
+    def render(self):
+        game.display.blit(self.ent, self.position)
