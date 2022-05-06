@@ -21,7 +21,7 @@ class Game:
         if event.type == pygame.KEYDOWN:
 
             if event.key == pygame.K_UP and game.vampire.grounded == True:
-                game.vampire.velocity.y += -1500
+                game.vampire.velocity.y -= game.vampire.jump
             if event.key == pygame.K_RIGHT:
                 self.keys_x += 1
             if event.key == pygame.K_LEFT:
@@ -44,9 +44,12 @@ class Game:
         for entity in game.entities:
             entity.position += entity.velocity * game.dt
 
-        max_vel = Vector2(300)
-        if abs(game.vampire.velocity.x) < max_vel.x:
+        if abs(game.vampire.velocity.x) < game.vampire.max_vel.x:
             game.vampire.velocity.x += game.vampire.acceleration.x * self.keys_x * game.dt
+        if game.vampire.velocity.y < -game.vampire.max_vel.y:
+            game.vampire.velocity.y = game.vampire.max_vel.y
+        elif game.vampire.velocity.y > game.vampire.max_vel.y:
+            game.vampire.velocity.y = game.vampire.max_vel.y
 
         # flipping
         if game.vampire.velocity.x < 0 and game.vampire.lookleft == False:
@@ -61,11 +64,8 @@ class Game:
                 game.vampire.velocity.x -= game.vampire.velocity.x * game.vampire.deceleration * game.dt
             else:
                 game.vampire.velocity.x = 0
-        if self.keys_y == 0:
-            if abs(game.vampire.velocity.y) > game.vampire.min_speed:
-                game.vampire.velocity.y -= game.vampire.velocity.y * game.vampire.deceleration * game.dt
-            else:
-                game.vampire.velocity.y = 0
+        if self.keys_x < 0 and game.vampire.velocity.x > 0 or self.keys_x > 0 and game.vampire.velocity.x < 0:
+            game.vampire.velocity.x -= game.vampire.velocity.x * game.vampire.deceleration * game.dt
 
         if not game.vampire.grounded:
             game.vampire.velocity.y += game.vampire.gravity * game.dt
@@ -87,11 +87,11 @@ class Game:
         entity.position.x = next_x
 
         next_y = game.vampire.position.y + entity.velocity.y * game.dt
-        collision = self.tile_collision(Vector2(entity.position.x, next_y), entity.size)
-        if collision["tl"] or collision["tr"]:
+        collisions = self.tile_collision(Vector2(entity.position.x, next_y), entity.size)
+        if collisions["tl"] or collisions["tr"]:
             next_y = self.get_tile_xy_at(*entity.position.xy).y
             game.vampire.velocity.y = 0
-        if collision["bl"] or collision["br"]:
+        if collisions["bl"] or collisions["br"]:
             next_y = self.get_tile_xy_at(entity.position.x,
                                          entity.position.y + self.level.th // 2).y + (self.level.th - entity.size)
             entity.grounded = True
@@ -99,6 +99,8 @@ class Game:
         else:
             entity.grounded = False
         entity.position.y = next_y
+
+        game.text(f"grounded={game.vampire.grounded} {collisions} x={game.vampire.velocity.x:06.1f} y={game.vampire.velocity.y:06.1f}", (0, game.WINDOW_HEIGHT - game.font.get_height()))
 
     def get_tile_xy_at(self, x, y):
         tile_x = int(x // self.level.tw) * self.level.tw
