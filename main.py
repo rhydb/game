@@ -18,13 +18,13 @@ class Game:
         self.keys_x = 0
         self.deceleration = 10  # percentage decrease
         self.gravity = 4000
-        self.bounce=0.3
+        self.bounce = 0.3
 
     def charinput(self, event):
         if event.type == pygame.KEYDOWN:
 
-            if event.key == pygame.K_UP and game.vampire.grounded==True:
-                game.vampire.velocity.y+=-1500
+            if event.key == pygame.K_UP and game.vampire.grounded == True:
+                game.vampire.velocity.y += -1500
             if event.key == pygame.K_RIGHT:
                 self.keys_x += 1
             if event.key == pygame.K_LEFT:
@@ -35,8 +35,6 @@ class Game:
                 self.keys_x += 1
             if event.key == pygame.K_RIGHT:
                 self.keys_x -= 1
-
-
 
     def input(self):
         for event in pygame.event.get():
@@ -53,7 +51,6 @@ class Game:
         if abs(game.vampire.velocity.x) < max_vel.x:
             game.vampire.velocity.x += game.vampire.acceleration.x * self.keys_x * game.dt
 
-
         # flipping
         if game.vampire.velocity.x < 0 and game.vampire.lookleft == False:
             game.vampire.ent = pygame.transform.flip(game.vampire.ent, True, False)
@@ -62,22 +59,19 @@ class Game:
             game.vampire.ent = pygame.transform.flip(game.vampire.ent, True, False)
             game.vampire.lookleft = False
 
-        self.minspeed = 5
         if self.keys_x == 0:
-            if abs(game.vampire.velocity.x) > self.minspeed:
+            if abs(game.vampire.velocity.x) > game.vampire.min_speed:
                 game.vampire.velocity.x -= game.vampire.velocity.x * self.deceleration * game.dt
             else:
                 game.vampire.velocity.x = 0
         if self.keys_y == 0:
-            if abs(game.vampire.velocity.y) > self.minspeed:
+            if abs(game.vampire.velocity.y) > game.vampire.min_speed:
                 game.vampire.velocity.y -= game.vampire.velocity.y * self.deceleration * game.dt
             else:
                 game.vampire.velocity.y = 0
 
-        if  game.vampire.grounded==False:
-            game.vampire.velocity.y += self.gravity* game.dt
-
-
+        if not game.vampire.grounded:
+            game.vampire.velocity.y += self.gravity * game.dt
 
         self.resolve_tile_collision(game.vampire)
 
@@ -109,7 +103,6 @@ class Game:
             entity.grounded = False
         entity.position.y = next_y
 
-
     def get_tile_xy_at(self, x, y):
         tile_x = int(x // self.level.tw) * self.level.tw
         tile_y = int(y // self.level.th) * self.level.th
@@ -117,22 +110,21 @@ class Game:
 
     def windowcolission(self):
         for i in [game.vampire]:
-            #right side
+            # right side
             if i.position.x + i.size > game.WINDOW_WIDTH:
                 i.position.x -= self.bounce
                 i.velocity.x = abs(i.velocity.x) * -0.1
-            #left side
+            # left side
             if i.position.x < 0:
                 i.velocity.x = -abs(i.velocity.x) * -0.1
                 i.position.x += self.bounce
-            #top side
+            # top side
             if i.position.y < 0:
                 i.velocity.y = -abs(i.velocity.y) * -0.1
                 i.position.y += self.bounce
 
-
-            if i.position.y+i.size>game.WINDOW_HEIGHT:
-                i.position.xy=(0,0)
+            if i.position.y + i.size > game.WINDOW_HEIGHT:
+                i.position.xy = (0, 0)
 
     def tile_collision(self, position: Vector2, size: int):
         return {
@@ -169,7 +161,8 @@ class Game:
             for entity in game.entities:
                 game.display.blit(entity.ent, entity.position)
             game.display.blit(game.vampire.ent, game.vampire.position)
-            pygame.draw.rect(game.display, (255, 0, 0), (*game.vampire.position.xy, game.vampire.size, game.vampire.size), 1)
+            pygame.draw.rect(game.display, (255, 0, 0),
+                             (*game.vampire.position.xy, game.vampire.size, game.vampire.size), 1)
             pygame.display.flip()
 
 
