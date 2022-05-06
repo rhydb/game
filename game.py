@@ -21,7 +21,7 @@ vampire = Player("player", 500, "Theguy.png", (1, 1))
 def text(text, pos, colour=(0, 0, 0), antialias=False, center=False):
     surface = font.render(text, antialias, colour)
     if center:
-        rect = text.get_rect(center=(x / 2, y / 2))
+        rect = text.get_rect(center=(pos[0] / 2, pos[1] / 2))
         display.blit(text, rect)
     else:
         display.blit(surface, pos)
