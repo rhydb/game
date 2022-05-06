@@ -20,8 +20,8 @@ class Game:
     def charinput(self, event):
         if event.type == pygame.KEYDOWN:
 
-            if event.key == pygame.K_UP and game.vampire.grounded == True:
-                game.vampire.velocity.y -= game.vampire.jump
+            if event.key == pygame.K_UP:
+                self.keys_y -= 1
             if event.key == pygame.K_RIGHT:
                 self.keys_x += 1
             if event.key == pygame.K_LEFT:
@@ -32,6 +32,8 @@ class Game:
                 self.keys_x += 1
             if event.key == pygame.K_RIGHT:
                 self.keys_x -= 1
+            if event.key == pygame.K_UP:
+                self.keys_y += 1
 
     def input(self):
         for event in pygame.event.get():
@@ -43,6 +45,9 @@ class Game:
         # acceleration by input
         for entity in game.entities:
             entity.position += entity.velocity * game.dt
+
+        if self.keys_y < 0 and game.vampire.grounded:
+            game.vampire.velocity.y -= game.vampire.jump
 
         if abs(game.vampire.velocity.x) < game.vampire.max_vel.x:
             game.vampire.velocity.x += game.vampire.acceleration.x * self.keys_x * game.dt
@@ -70,28 +75,42 @@ class Game:
         if not game.vampire.grounded:
             game.vampire.velocity.y += game.vampire.gravity * game.dt
 
+        collisions = self.tile_collision(game.vampire.position, game.vampire.size, self.level.detectors)
+        collided_w = 0
+        if collisions["tl"] > 0:
+            collided_w = collisions["tl"]
+        if collisions["tr"] > 0:
+            collided_w = collisions["tr"]
+        if collisions["bl"] > 0:
+            collided_w = collisions["bl"]
+        if collisions["br"] > 0:
+            collided_w = collisions["br"]
+        if collided_w == 32:
+            print(collided_w)
+            game.text("CHEST ! ! ! ", (game.WINDOW_WIDTH / 2, game.font.get_height()), center=True)
+
         self.resolve_tile_collision(game.vampire)
 
     def resolve_tile_collision(self, entity):
         next_x = entity.position.x + entity.velocity.x * game.dt
-        collisions = self.tile_collision(Vector2(next_x, entity.position.y), entity.size)
+        collisions = self.tile_collision(Vector2(next_x, entity.position.y), entity.size, self.level.solids)
         if entity.velocity.x <= 0:
-            if collisions["tl"] or collisions["bl"] and not entity.grounded:
+            if collisions["tl"] > 0 or collisions["bl"] > 0 and not entity.grounded:
                 next_x = self.get_tile_xy_at(*entity.position.xy).x
                 entity.velocity.x = 0
         else:
-            if collisions["tr"] or collisions["br"] and not entity.grounded:
+            if collisions["tr"] > 0 or collisions["br"] > 0 and not entity.grounded:
                 next_x = self.get_tile_xy_at(entity.position.x + self.level.tw // 2,
                                              entity.position.y).x - 1 + (self.level.tw - entity.size)
                 entity.velocity.x = 0
         entity.position.x = next_x
 
         next_y = game.vampire.position.y + entity.velocity.y * game.dt
-        collisions = self.tile_collision(Vector2(entity.position.x, next_y), entity.size)
-        if collisions["tl"] or collisions["tr"]:
+        collisions = self.tile_collision(Vector2(entity.position.x, next_y), entity.size, self.level.solids)
+        if collisions["tl"] > 0 or collisions["tr"] > 0:
             next_y = self.get_tile_xy_at(*entity.position.xy).y
             game.vampire.velocity.y = 0
-        if collisions["bl"] or collisions["br"]:
+        if collisions["bl"] > 0 or collisions["br"] > 0:
             next_y = self.get_tile_xy_at(entity.position.x,
                                          entity.position.y + self.level.th // 2).y + (self.level.th - entity.size)
             entity.grounded = True
@@ -125,23 +144,23 @@ class Game:
             if i.position.y + i.size > game.WINDOW_HEIGHT:
                 i.position.xy = (0, 0)
 
-    def tile_collision(self, position: Vector2, size: int):
+    def tile_collision(self, position: Vector2, size: int, layer):
         return {
-            "tl": self.get_tile_at(*position.xy) > 0,
+            "tl": self.get_tile_at(*position.xy, layer),
             "tr": self.get_tile_at(position.x + size,
-                                   position.y) > 0,
+                                   position.y, layer),
             "bl": self.get_tile_at(position.x,
-                                   position.y + size) > 0,
+                                   position.y + size, layer),
             "br": self.get_tile_at(position.x + size,
-                                   position.y + size) > 0
+                                   position.y + size, layer)
         }
 
-    def get_tile_at(self, x, y):
+    def get_tile_at(self, x, y, layer):
         tile_x = int(x // self.level.tw)
         tile_y = int(y // self.level.th)
         if 0 <= tile_x < self.level.width and 0 <= tile_y < self.level.height:
             tile_index = tile_x + tile_y * self.level.width
-            return self.level.tile_set[tile_index]
+            return layer[tile_index]
         return -1
 
     def loop(self):
