@@ -34,7 +34,6 @@ class Tilemap:
         cols_on_screen = game.WINDOW_WIDTH // self.tw
         total_tiles = self.width * self.height
         for layer in [self.solids, self.detectors, self.passthrough]:
-            i = 0
             for i in range(rows_on_screen):
                 if i * self.width >= total_tiles:
                     break
@@ -50,4 +49,3 @@ class Tilemap:
                     y = (index // self.width) * self.th
                     tile = self.tiles[tile_id]
                     game.display.blit(tile, (x, y), (0, 0, self.tw, self.th))
-
