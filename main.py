@@ -52,7 +52,7 @@ class Game:
         if abs(game.vampire.velocity.x) < game.vampire.max_vel.x:
             game.vampire.velocity.x += game.vampire.acceleration.x * self.keys_x * game.dt
         if game.vampire.velocity.y < -game.vampire.max_vel.y:
-            game.vampire.velocity.y = game.vampire.max_vel.y
+            game.vampire.velocity.y = -game.vampire.max_vel.y
         elif game.vampire.velocity.y > game.vampire.max_vel.y:
             game.vampire.velocity.y = game.vampire.max_vel.y
 
@@ -86,7 +86,6 @@ class Game:
         if collisions["br"] > 0:
             collided_w = collisions["br"]
         if collided_w == 32:
-            print(collided_w)
             game.text("CHEST ! ! ! ", (game.WINDOW_WIDTH / 2, game.font.get_height()), center=True)
 
         self.resolve_tile_collision(game.vampire)
