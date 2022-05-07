@@ -30,12 +30,24 @@ class Tilemap:
                     self.tiles.append(tile)
 
     def render(self):
+        rows_on_screen = game.WINDOW_HEIGHT // self.th
+        cols_on_screen = game.WINDOW_WIDTH // self.tw
+        total_tiles = self.width * self.height
         for layer in [self.solids, self.detectors, self.passthrough]:
-            for i, index in enumerate(layer):
-                if index == 0:
-                    continue
-                index -= 1
-                x = (i % self.width) * self.tw
-                y = (i // self.width) * self.th
-                tile = self.tiles[index]
-                game.display.blit(tile, (x, y), (0, 0, self.tw, self.th))
+            i = 0
+            for i in range(rows_on_screen):
+                if i * self.width >= total_tiles:
+                    break
+                for j in range(cols_on_screen):
+                    index = i * self.width + j
+                    tile_id = layer[index]
+                    if tile_id == 0:
+                        continue
+                    tile_id -= 1
+                    x = (index % self.width) * self.tw
+                    if x >= game.WINDOW_WIDTH:
+                        continue
+                    y = (index // self.width) * self.th
+                    tile = self.tiles[tile_id]
+                    game.display.blit(tile, (x, y), (0, 0, self.tw, self.th))
+
