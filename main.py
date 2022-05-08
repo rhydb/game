@@ -6,6 +6,8 @@ import pygame
 from pygame.math import Vector2
 from entity import Entity
 from Tilemap import Tilemap
+from animations import AnimatedSprite
+import os
 
 
 class Game:
@@ -203,6 +205,8 @@ class Game:
                 entity.render()
             game.vampire.render()
             pygame.display.flip()
+            AnimatedSprite(10,24,(os.path.join("Assets","Soldier1","Walking"))).animationrender([30,30],1000)
+
 
 
 Game().loop()
