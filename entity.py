@@ -42,6 +42,3 @@ class Entity():
             game.display.blit(self.walkingimages[int(self.count) % len(self.walkingimages)], (self.position.x - game.camera_x, self.position.y))
             self.count+=game.dt * self.fps
 
-
-
-

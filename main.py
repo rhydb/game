@@ -185,6 +185,7 @@ class Game:
             return layer[tile_index]
         return -1
 
+
     def loop(self):
         clock = pygame.time.Clock()
         while self.running:
