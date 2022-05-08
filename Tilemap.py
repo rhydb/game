@@ -44,8 +44,6 @@ class Tilemap:
                         continue
                     tile_id -= 1
                     x = (index % self.width) * self.tw
-                    if x >= game.WINDOW_WIDTH:
-                        continue
                     y = (index // self.width) * self.th
                     tile = self.tiles[tile_id]
                     game.display.blit(tile, (x, y), (0, 0, self.tw, self.th))
