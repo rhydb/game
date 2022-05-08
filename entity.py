@@ -20,8 +20,8 @@ class Entity():
         self.walkingimages = []
         for i in walkingnames:
             self.walkingimages.append(pygame.image.load(os.path.join("Assets", "Soldier1", "Walking",i)))
-        for i in self.walkingimages:
-            i = pygame.transform.scale(i, (self.size, self.size))
+        for i in range(len(self.walkingimages)):
+            self.walkingimages[i] = pygame.transform.scale(self.walkingimages[i], (self.size, self.size))
 
 
 
