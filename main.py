@@ -18,6 +18,7 @@ class Game:
         self.level = Tilemap("map.tmj")
         self.keys_y = 0
         self.keys_x = 0
+        self.man = Entity("Theguy.png", (100, 100))
 
     def charinput(self, event):
         if event.type == pygame.KEYDOWN:
@@ -104,6 +105,9 @@ class Game:
             collided_w = collisions["br"]
         if collided_w == 32:
             game.text("CHEST ! ! ! ", (game.WINDOW_WIDTH / 2, game.font.get_height()), center=True)
+            self.level.passthrough[159]=44
+            self.level.passthrough[160] = 44
+            self.level.passthrough[161] = 44
             self.level.solids[159]=0
             self.level.solids[160] = 0
             self.level.solids[161] = 0
@@ -210,6 +214,7 @@ class Game:
                 entity.render()
             game.vampire.render()
             self.bloke.animationrender([600,110],3)
+            self.man.render()
             pygame.display.flip()
 
 

@@ -1,6 +1,5 @@
 import pygame
 from pygame.math import Vector2
-from entity import Entity
 from player import Player
 
 FPS = 60
