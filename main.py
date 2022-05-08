@@ -190,6 +190,8 @@ class Game:
 
     def loop(self):
         clock = pygame.time.Clock()
+        self.bloke = AnimatedSprite(10, 24, (os.path.join("Assets", "Soldier1", "Walking")))
+
         while self.running:
             game.dt = clock.tick(game.FPS) / 1000
             self.input()
@@ -204,8 +206,8 @@ class Game:
             for entity in game.entities:
                 entity.render()
             game.vampire.render()
+            self.bloke.animationrender([600,110],3000)
             pygame.display.flip()
-            AnimatedSprite(10,24,(os.path.join("Assets","Soldier1","Walking"))).animationrender([30,30],1000)
 
 
 
