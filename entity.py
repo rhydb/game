@@ -15,6 +15,14 @@ class Entity():
         self.grounded = False
         self.bounce = 10
 
+        try:
+            for i in os.path.join("Assets", imagedirec)
+            pygame.image.load()
+
     def render(self):
         game.display.blit(self.ent, (self.position.x - game.camera_x, self.position.y))
         pygame.draw.rect(game.display, (255, 0, 0), (self.position.x - game.camera_x, self.position.y, self.size, self.size), 1)
+        if self.velocity.x !=0 and self.grounded==True:
+
+
+
