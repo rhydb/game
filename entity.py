@@ -39,9 +39,8 @@ class Entity():
             game.display.blit(self.ent, (self.position.x - game.camera_x, self.position.y))
             self.count=0
         elif self.grounded==True:
-            game.display.blit(self.walkingimages[int(self.count) % len(self.walkingimages)], (self.position.x - game.camera_x, self.position.y))
-            self.count+=game.dt * self.fps
-            game.text(str(self.count), (0, game.WINDOW_HEIGHT - game.font.get_height() * 2))
+            game.display.blit(self.walkingimages[(self.count // self.fps) % len(self.walkingimages)], (self.position.x - game.camera_x, self.position.y))
+            self.count+=1
 
 
 
