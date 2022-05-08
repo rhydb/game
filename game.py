@@ -7,6 +7,8 @@ FPS = 60
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 480
 dt = 0
+camera_x = 0
+camera_padding = 200
 print("Initialising font")
 pygame.font.init()
 font = pygame.font.Font(pygame.font.get_default_font(), 18)

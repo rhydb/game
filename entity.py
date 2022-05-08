@@ -16,4 +16,5 @@ class Entity():
         self.bounce = 10
 
     def render(self):
-        game.display.blit(self.ent, self.position)
+        game.display.blit(self.ent, (self.position.x - game.camera_x, self.position.y))
+        pygame.draw.rect(game.display, (255, 0, 0), (self.position.x - game.camera_x, self.position.y, self.size, self.size), 1)

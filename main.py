@@ -26,6 +26,12 @@ class Game:
                 self.keys_x += 1
             if event.key == pygame.K_LEFT:
                 self.keys_x -= 1
+            if event.key == pygame.K_d:
+                game.camera_x += 10
+                print(game.camera_x)
+            if event.key == pygame.K_a:
+                game.camera_x -= 10
+                print(game.camera_x)
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
@@ -90,6 +96,14 @@ class Game:
 
         self.resolve_tile_collision(game.vampire)
 
+        if game.vampire.position.x > game.camera_padding:
+            if game.vampire.position.x - game.camera_x < game.camera_padding:
+                game.camera_x = int(game.vampire.position.x - game.camera_padding)
+        else:
+            game.camera_x = 0
+        if game.vampire.position.x - game.camera_x > game.WINDOW_WIDTH - game.camera_padding:
+            game.camera_x = int(game.vampire.position.x - game.WINDOW_WIDTH + game.camera_padding)
+
     def resolve_tile_collision(self, entity):
         next_x = entity.position.x + entity.velocity.x * game.dt
         collisions = self.tile_collision(Vector2(next_x, entity.position.y), entity.size, self.level.solids)
@@ -118,7 +132,7 @@ class Game:
             entity.grounded = False
         entity.position.y = next_y
 
-        game.text(f"grounded={game.vampire.grounded} {collisions} x={game.vampire.velocity.x:06.1f} y={game.vampire.velocity.y:06.1f}", (0, game.WINDOW_HEIGHT - game.font.get_height()))
+        game.text(f"grounded={game.vampire.grounded} x={game.vampire.position.x:06.1f} y={game.vampire.position.y:06.1f} camera={game.camera_x}", (0, game.WINDOW_HEIGHT - game.font.get_height()))
 
     def get_tile_xy_at(self, x, y):
         tile_x = int(x // self.level.tw) * self.level.tw
@@ -128,7 +142,7 @@ class Game:
     def windowcolission(self):
         for i in [game.vampire]:
             # right side
-            if i.position.x + i.size > game.WINDOW_WIDTH:
+            if i.position.x + i.size > game.camera_x + game.WINDOW_WIDTH:
                 i.position.x -= i.bounce
                 i.velocity.x = abs(i.velocity.x) * -0.1
             # left side
@@ -177,9 +191,7 @@ class Game:
             # displaying every entity
             for entity in game.entities:
                 entity.render()
-            game.display.blit(game.vampire.ent, game.vampire.position)
-            pygame.draw.rect(game.display, (255, 0, 0),
-                             (*game.vampire.position.xy, game.vampire.size, game.vampire.size), 1)
+            game.vampire.render()
             pygame.display.flip()
 
 
