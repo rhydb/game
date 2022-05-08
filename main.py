@@ -65,9 +65,18 @@ class Game:
         # flipping
         if game.vampire.velocity.x < 0 and game.vampire.lookleft == False:
             game.vampire.ent = pygame.transform.flip(game.vampire.ent, True, False)
+            count=0
+            for i in range(len(game.vampire.walkingimages)):
+                game.vampire.walkingimages[count]= pygame.transform.flip(game.vampire.walkingimages[count], True, False)
+                count+=1
             game.vampire.lookleft = True
+
         if game.vampire.velocity.x > 0 and game.vampire.lookleft == True:
             game.vampire.ent = pygame.transform.flip(game.vampire.ent, True, False)
+            count=0
+            for i in range(len(game.vampire.walkingimages)):
+                game.vampire.walkingimages[count]= pygame.transform.flip(game.vampire.walkingimages[count], True, False)
+                count+=1
             game.vampire.lookleft = False
 
         if self.keys_x == 0:

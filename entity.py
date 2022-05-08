@@ -20,6 +20,9 @@ class Entity():
         self.walkingimages = []
         for i in walkingnames:
             self.walkingimages.append(pygame.image.load(os.path.join("Assets", "Soldier1", "Walking",i)))
+        for i in self.walkingimages:
+            i = pygame.transform.scale(i, (self.size, self.size))
+
 
 
 
@@ -31,7 +34,7 @@ class Entity():
     def render(self):
         pygame.draw.rect(game.display, (255, 0, 0),(self.position.x - game.camera_x, self.position.y, self.size, self.size), 1)
 
-        if self.velocity.x == 0:
+        if self.velocity.x == 0 or self.grounded==False:
             game.display.blit(self.ent, (self.position.x - game.camera_x, self.position.y))
             self.count=0
         elif self.grounded==True:
