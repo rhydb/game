@@ -18,6 +18,6 @@ class AnimatedSprite:
         self.count=0
 
     def animationrender(self, position, duration):
-        if self.count < duration*game.dt:
+        if self.count < duration* self.fps:
             game.display.blit(self.formatframe[int(self.count) % len(self.formatframe)],(position[0] - game.camera_x, position[1]))
             self.count += game.dt * self.fps

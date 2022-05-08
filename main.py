@@ -104,6 +104,9 @@ class Game:
             collided_w = collisions["br"]
         if collided_w == 32:
             game.text("CHEST ! ! ! ", (game.WINDOW_WIDTH / 2, game.font.get_height()), center=True)
+            self.level.solids[159]=0
+            self.level.solids[160] = 0
+            self.level.solids[161] = 0
 
         self.resolve_tile_collision(game.vampire)
 
@@ -206,7 +209,7 @@ class Game:
             for entity in game.entities:
                 entity.render()
             game.vampire.render()
-            self.bloke.animationrender([600,110],3000)
+            self.bloke.animationrender([600,110],3)
             pygame.display.flip()
 
 
