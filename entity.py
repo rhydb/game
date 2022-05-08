@@ -2,6 +2,7 @@ import pygame
 import game
 from pygame.math import Vector2
 import os
+import glob
 
 
 class Entity():
@@ -15,14 +16,28 @@ class Entity():
         self.grounded = False
         self.bounce = 10
 
-        try:
-            for i in os.path.join("Assets", imagedirec)
-            pygame.image.load()
+        walkingnames = os.listdir(os.path.join("Assets","Soldier1","Walking"))
+        self.walkingimages = []
+        for i in walkingnames:
+            self.walkingimages.append(pygame.image.load(os.path.join("Assets", "Soldier1", "Walking",i)))
+
+
+
+
+
+
+
 
     def render(self):
-        game.display.blit(self.ent, (self.position.x - game.camera_x, self.position.y))
-        pygame.draw.rect(game.display, (255, 0, 0), (self.position.x - game.camera_x, self.position.y, self.size, self.size), 1)
-        if self.velocity.x !=0 and self.grounded==True:
+        pygame.draw.rect(game.display, (255, 0, 0),(self.position.x - game.camera_x, self.position.y, self.size, self.size), 1)
+
+        if self.velocity.x == 0:
+            game.display.blit(self.ent, (self.position.x - game.camera_x, self.position.y))
+            self.count=0
+        elif self.grounded==True:
+            game.display.blit(self.walkingimages[self.count% len(self.walkingimages)], (self.position.x - game.camera_x, self.position.y))
+            self.count+=1
+
 
 
 
