@@ -15,7 +15,7 @@ class Entity():
         self.lookleft = False
         self.grounded = False
         self.bounce = 10
-        self.fps = 30
+        self.fps = 20
 
         walkingnames = os.listdir(os.path.join("Assets","Soldier1","Walking"))
         self.walkingimages = []
@@ -39,8 +39,9 @@ class Entity():
             game.display.blit(self.ent, (self.position.x - game.camera_x, self.position.y))
             self.count=0
         elif self.grounded==True:
-            game.display.blit(self.walkingimages[(self.count // self.fps) % len(self.walkingimages)], (self.position.x - game.camera_x, self.position.y))
-            self.count+=1
+            game.display.blit(self.walkingimages[int(self.count) % len(self.walkingimages)], (self.position.x - game.camera_x, self.position.y))
+            self.count+=game.dt * self.fps
+            game.text(str(self.count), (0, game.WINDOW_HEIGHT - game.font.get_height() * 2))
 
 
 
