@@ -9,7 +9,10 @@ class Tilemap:
 
         with open(file) as f:
             data = json.load(f)
-            self.tile_set = data["layers"][0]["data"]
+            self.solids = data["layers"][0]["data"]
+            self.detectors = data["layers"][1]["data"]
+            self.passthrough = data["layers"][2]["data"]
+
             self.width = data["layers"][0]["width"]
             self.height = data["layers"][0]["height"]
 
@@ -27,11 +30,23 @@ class Tilemap:
                     self.tiles.append(tile)
 
     def render(self):
-        for i, index in enumerate(self.tile_set):
-            if index == 0:
-                continue
-            index -= 1
-            x = (i % self.width) * self.tw
-            y = (i // self.width) * self.th
-            tile = self.tiles[index]
-            game.display.blit(tile, (x, y), (0, 0, self.tw, self.th))
+        rows_on_screen = game.WINDOW_HEIGHT // self.th
+        cols_on_screen = game.WINDOW_WIDTH // self.tw
+        total_tiles = self.width * self.height
+        starting_column = game.camera_x // self.tw
+        for layer in [self.solids, self.detectors, self.passthrough]:
+            for i in range(rows_on_screen):
+                if i * self.width >= total_tiles:
+                    break
+                for j in range(starting_column, starting_column + cols_on_screen + 1):
+                    index = i * self.width + j
+                    if index >= len(layer):
+                        break
+                    tile_id = layer[index]
+                    if tile_id == 0:
+                        continue
+                    tile_id -= 1
+                    x = (index % self.width) * self.tw
+                    y = (index // self.width) * self.th
+                    tile = self.tiles[tile_id]
+                    game.display.blit(tile, (x - game.camera_x, y), (0, 0, self.tw, self.th))
