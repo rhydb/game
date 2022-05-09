@@ -8,6 +8,7 @@ from entity import Entity
 from Tilemap import Tilemap
 from animations import AnimatedSprite
 import os
+from enemy import Enemy
 
 
 class Game:
@@ -19,6 +20,7 @@ class Game:
         self.keys_y = 0
         self.keys_x = 0
         self.man = Entity("Theguy.png", (100, 100))
+        self.evilman=enemy
 
     def charinput(self, event):
         if event.type == pygame.KEYDOWN:
