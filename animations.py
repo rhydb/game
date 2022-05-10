@@ -20,11 +20,11 @@ class AnimatedSprite:
         sprite_size_x = image_rect.w // cols
         sprite_size_y = image_rect.h // rows
 
-        for col in range(self.rows):
+        for row in range(self.rows):
             frame_row = []
-            for row in range(self.cols):
+            for col in range(self.cols):
                 frame = pygame.Surface((sprite_size_x, sprite_size_y), pygame.SRCALPHA)
-                frame.blit(image, (0, 0), (row * sprite_size_y, col * sprite_size_x, sprite_size_x, sprite_size_y))
+                frame.blit(image, (0, 0), (col * sprite_size_x, row * sprite_size_y, sprite_size_x, sprite_size_y))
                 frame_row.append(pygame.transform.scale(frame, (self.size, self.size)))
             self.frames.append(frame_row)
 
