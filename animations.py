@@ -14,11 +14,9 @@ class AnimatedSprite:
         self.formatframe = []
         self.frames = []
         self.flipped = False
-        print(f"{self.rows=} {self.row=} {self.cols=}")
 
         image = pygame.image.load(file)
         image_rect = image.get_rect()
-        print(image_rect)
         sprite_size_x = image_rect.w // cols
         sprite_size_y = image_rect.h // rows
 
@@ -29,7 +27,6 @@ class AnimatedSprite:
                 frame.blit(image, (0, 0), (row * sprite_size_y, col * sprite_size_x, sprite_size_x, sprite_size_y))
                 frame_row.append(pygame.transform.scale(frame, (self.size, self.size)))
             self.frames.append(frame_row)
-        print(self.frames)
 
         self.count = 0
 
