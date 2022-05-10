@@ -11,6 +11,23 @@ from animations import AnimatedSprite
 import os
 from enemy import Enemy
 
+class Shuriken(Entity):
+    def __init__(self, *args, **kwargs):
+        super().__init__("shuriken.png", *args, **kwargs)
+        self.rotation = 0
+        self.rotated_iamge = None
+        self.new_rect = None
+
+    def update(self):
+        super().update()
+        self.rotation += 1080 * game.dt
+
+        self.rotated_image = pygame.transform.rotate(self.ent, self.rotation)
+        self.new_rect = self.rotated_image.get_rect(center=self.ent.get_rect(topleft=self.position.xy).center)
+
+    def render(self):
+        game.display.blit(self.rotated_image, (self.new_rect.x - game.camera_x, self.new_rect.y))
+
 
 class Game:
     def __init__(self):
@@ -24,6 +41,12 @@ class Game:
         game.vampire = Player("player", 500, "ninja.png", (1, 1))
 
     def charinput(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == pygame.BUTTON_LEFT:
+                shuriken = Shuriken(game.vampire.position)
+                shuriken.velocity = pygame.mouse.get_pos() - (game.vampire.position - (game.camera_x, 0))
+                shuriken.velocity.scale_to_length(1000)
+                game.entities.append(shuriken)
         if event.type == pygame.KEYDOWN:
 
             if event.key == pygame.K_UP:
@@ -55,8 +78,6 @@ class Game:
 
     def charactermovement(self):
         # acceleration by input
-        for entity in game.entities:
-            entity.position += entity.velocity * game.dt
 
         if self.keys_y < 0 and game.vampire.grounded:
             game.vampire.velocity.y -= game.vampire.jump
@@ -163,7 +184,7 @@ class Game:
             entity.grounded = False
         entity.position.y = next_y
 
-        game.text(f"grounded={game.vampire.grounded} x={game.vampire.position.x:06.1f} y={game.vampire.position.y:06.1f} camera={game.camera_x}", (0, game.WINDOW_HEIGHT - game.font.get_height()))
+        game.text(f"grounded={game.vampire.grounded} x={game.vampire.position.x:06.1f} y={game.vampire.position.y:06.1f} camera={game.camera_x} entities={len(game.entities)}", (0, game.WINDOW_HEIGHT - game.font.get_height()))
 
     def get_tile_xy_at(self, x, y):
         tile_x = int(x // self.level.tw) * self.level.tw
@@ -223,6 +244,7 @@ class Game:
 
             # displaying every entity
             for entity in game.entities:
+                entity.update()
                 entity.render()
             game.vampire.render()
             self.man.render()

@@ -26,7 +26,7 @@ class Entity():
             self.walkingimages[i] = pygame.transform.scale(self.walkingimages[i], (self.size, self.size))
 
     def update(self):
-        self.position += self.velocity
+        self.position += self.velocity * game.dt
 
     def render(self):
         pygame.draw.rect(game.display, (255, 0, 0),
