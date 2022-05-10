@@ -5,6 +5,7 @@ import game
 import pygame
 from pygame.math import Vector2
 from entity import Entity
+from player import Player
 from Tilemap import Tilemap
 from animations import AnimatedSprite
 import os
@@ -20,6 +21,7 @@ class Game:
         self.keys_y = 0
         self.keys_x = 0
         self.man = Entity("Theguy.png", (100, 100))
+        game.vampire = Player("player", 500, "ninja.png", (1, 1))
 
     def charinput(self, event):
         if event.type == pygame.KEYDOWN:
@@ -68,7 +70,7 @@ class Game:
 
         # flipping
         if game.vampire.velocity.x < 0 and game.vampire.lookleft == False:
-            game.vampire.ent = pygame.transform.flip(game.vampire.ent, True, False)
+            game.vampire.ent.flipped = True
             count=0
             for i in range(len(game.vampire.walkingimages)):
                 game.vampire.walkingimages[count]= pygame.transform.flip(game.vampire.walkingimages[count], True, False)
@@ -76,7 +78,7 @@ class Game:
             game.vampire.lookleft = True
 
         if game.vampire.velocity.x > 0 and game.vampire.lookleft == True:
-            game.vampire.ent = pygame.transform.flip(game.vampire.ent, True, False)
+            game.vampire.ent.flipped = False
             count=0
             for i in range(len(game.vampire.walkingimages)):
                 game.vampire.walkingimages[count]= pygame.transform.flip(game.vampire.walkingimages[count], True, False)
@@ -114,6 +116,16 @@ class Game:
             self.level.solids[161] = 0
 
         self.resolve_tile_collision(game.vampire)
+
+        if not game.vampire.grounded and game.vampire.velocity.y > 0:
+            game.vampire.ent.row = 2
+        else:
+            if game.vampire.velocity.x != 0:
+                game.vampire.ent.row = 1
+                game.vampire.ent.fps = 15
+            else:
+                game.vampire.ent.row = 0
+                game.vampire.ent.fps = 2
 
         if game.vampire.position.x > game.camera_padding:
             if game.vampire.position.x - game.camera_x < game.camera_padding:
@@ -198,7 +210,6 @@ class Game:
 
     def loop(self):
         clock = pygame.time.Clock()
-        self.bloke = AnimatedSprite(10, 24, (os.path.join("Assets", "Soldier1", "Walking")))
 
         while self.running:
             game.dt = clock.tick(game.FPS) / 1000
@@ -214,7 +225,6 @@ class Game:
             for entity in game.entities:
                 entity.render()
             game.vampire.render()
-            self.bloke.animationrender([600,110],3)
             self.man.render()
             pygame.display.flip()
 

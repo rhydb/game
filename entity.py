@@ -7,7 +7,7 @@ import glob
 
 class Entity():
     def __init__(self, imagedirec, position):
-        self.size = 24
+        self.size = 30
         self.ent = pygame.image.load(os.path.join("Assets", imagedirec))
         self.ent = pygame.transform.scale(self.ent, (self.size, self.size))
         self.position = Vector2(position)
