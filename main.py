@@ -11,6 +11,32 @@ from animations import AnimatedSprite
 import os
 from enemy import Enemy
 
+class PauseMenu:
+    def __init__(self, options: dict):
+        self.options = options
+        self.selected = 0
+        self.height = len(options) * game.font.get_height()
+        # self.surface = pygame.Surface((0,0))
+        # self.widths = [0] * len(options)
+        # for i, item in enumerate(self.options.keys()):
+        #     new_surface = game.font.render(item, False, (255, 255, 255))
+        #     self.widths[i] = new_surface.get_width()
+        #     old_surface = self.surface
+        #     new_width = max(old_surface.get_width(), new_surface.get_width())
+        #     self.surface = pygame.Surface((new_width, old_surface.get_height() + game.font.get_height()))
+        #     self.surface.blit(old_surface, (new_width // 2 - old_surface.get_width() // 2, 0))
+        #     self.surface.blit(new_surface, (new_width // 2 - new_surface.get_width() // 2, game.font.get_height() * i))
+    def render(self):
+        # pygame.draw.rect(game.display, (255,255,255), (game.WINDOW_WIDTH // 2 - self.widths[self.selected] // 2, game.WINDOW_HEIGHT // 2 - self.surface.get_height() // 2 + self.selected * game.font.get_height(), self.surface.get_width(), 10))
+        # game.display.blit(self.surface, ((game.WINDOW_WIDTH - self.surface.get_width()) // 2, game.WINDOW_HEIGHT // 2 - self.surface.get_height() // 2))
+        for i, item in enumerate(self.options.keys()):
+            surface = game.font.render(item, False, (255,255,255))
+            if i == self.selected:
+                pygame.draw.rect(game.display, (41, 77, 135), (game.WINDOW_WIDTH // 2 - surface.get_width() // 2, game.WINDOW_HEIGHT // 2 - self.height // 2 + i * game.font.get_height(), surface.get_width(), surface.get_height()))
+            game.display.blit(surface, ((game.WINDOW_WIDTH - surface.get_width()) // 2, game.WINDOW_HEIGHT // 2 - self.height // 2 + i * game.font.get_height()))
+
+
+
 class Shuriken(Entity):
     def __init__(self, *args, **kwargs):
         super().__init__("shuriken.png", *args, **kwargs)
@@ -38,7 +64,22 @@ class Game:
         self.keys_y = 0
         self.keys_x = 0
         self.man = Entity("Theguy.png", (100, 100))
+        self.inpause = False
+        self.pausemenu = PauseMenu({
+            "Resume": self.toggle_pause,
+            "Exit": self.exit,
+        })
         game.vampire = Player("player", 500, "ninja.png", (1, 1))
+
+    def exit(self):
+        self.running = False
+
+    def toggle_pause(self):
+        self.inpause = not self.inpause
+        if self.inpause:
+            self.bg = (0, 0, 0)
+        else:
+            self.bg = (200, 200, 200)
 
     def charinput(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -51,6 +92,18 @@ class Game:
 
             if event.key == pygame.K_UP:
                 self.keys_y -= 1
+                if self.inpause:
+                    if self.pausemenu.selected > 0:
+                        self.pausemenu.selected -= 1
+            if event.key == pygame.K_DOWN:
+                if self.inpause:
+                    if self.pausemenu.selected < len(self.pausemenu.options) - 1:
+                        self.pausemenu.selected += 1
+
+            if event.key == pygame.K_RETURN:
+                if self.inpause:
+                    list(self.pausemenu.options.values())[self.pausemenu.selected]()
+
             if event.key == pygame.K_RIGHT:
                 self.keys_x += 1
             if event.key == pygame.K_LEFT:
@@ -61,6 +114,9 @@ class Game:
             if event.key == pygame.K_a:
                 game.camera_x -= 10
                 print(game.camera_x)
+
+            if event.key == pygame.K_ESCAPE:
+                self.toggle_pause()
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
@@ -237,17 +293,20 @@ class Game:
             self.input()
 
             game.display.fill(self.bg)
-            self.level.render()
+            if self.inpause:
+                self.pausemenu.render()
+            else:
+                self.level.render()
 
-            self.charactermovement()
-            self.windowcolission()
+                self.charactermovement()
+                self.windowcolission()
 
-            # displaying every entity
-            for entity in game.entities:
-                entity.update()
-                entity.render()
-            game.vampire.render()
-            self.man.render()
+                # displaying every entity
+                for entity in game.entities:
+                    entity.update()
+                    entity.render()
+                game.vampire.render()
+                self.man.render()
             pygame.display.flip()
 
 
