@@ -25,7 +25,7 @@ class Tilemap:
 
             for y in range(0, self.image_rect.h, self.th):
                 for x in range(0, self.image_rect.w, self.tw):
-                    tile = pygame.Surface((self.tw, self.th))
+                    tile = pygame.Surface((self.tw, self.th), pygame.SRCALPHA)
                     tile.blit(self.image, (0, 0), (x, y, self.tw, self.th))
                     self.tiles.append(tile)
 
@@ -49,4 +49,5 @@ class Tilemap:
                     x = (index % self.width) * self.tw
                     y = (index // self.width) * self.th
                     tile = self.tiles[tile_id]
-                    game.display.blit(tile, (x - game.camera_x, y), (0, 0, self.tw, self.th))
+                    game.display.blit(
+                        tile, (x - game.camera_x, y), (0, 0, self.tw, self.th))
