@@ -108,12 +108,6 @@ class Game:
                 self.keys_x += 1
             if event.key == pygame.K_LEFT:
                 self.keys_x -= 1
-            if event.key == pygame.K_d:
-                game.camera_x += 10
-                print(game.camera_x)
-            if event.key == pygame.K_a:
-                game.camera_x -= 10
-                print(game.camera_x)
 
             if event.key == pygame.K_ESCAPE:
                 self.toggle_pause()
