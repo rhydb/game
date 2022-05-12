@@ -21,15 +21,15 @@ class PauseMenu:
 
     def render(self):
         for i, item in enumerate(self.options.keys()):
-            surface = game.font.render(item, False, (0, 0, 0) if i == self.selected else (255, 255, 255))
+            surface = game.font.render(item, game.antialias, (0, 0, 0) if i == self.selected else (255, 255, 255))
             if i == self.selected:
-                pygame.draw.rect(game.display, (255, 255, 255), ((game.WINDOW_WIDTH - surface.get_width()) // 2,
+                pygame.draw.rect(game.display, (255, 255, 255), ((game.DISPLAY_WIDTH - surface.get_width()) // 2,
                                                                  (
-                                                                         game.WINDOW_HEIGHT - self.height) // 2 + i * game.font.get_height() + i * self.padding_y,
+                                                                         game.DISPLAY_HEIGHT - self.height) // 2 + i * game.font.get_height() + i * self.padding_y,
                                                                  surface.get_width(), surface.get_height()))
-            game.display.blit(surface, ((game.WINDOW_WIDTH - surface.get_width()) // 2,
+            game.display.blit(surface, ((game.DISPLAY_WIDTH - surface.get_width()) // 2,
                                         (
-                                                    game.WINDOW_HEIGHT - self.height) // 2 + i * game.font.get_height() + i * self.padding_y))
+                                                game.DISPLAY_HEIGHT - self.height) // 2 + i * game.font.get_height() + i * self.padding_y))
 
     def on_keypress(self, key):
         if key == pygame.K_DOWN:
@@ -59,20 +59,20 @@ class SettingsMenu(PauseMenu):
         for i, widget in enumerate(self.options):
             widget_surface: pygame.Surface = widget.render()
             offset_x = 100
-            surface = game.font.render(widget.text, False, (0, 0, 0) if i == self.selected else (255, 255, 255))
+            surface = game.font.render(widget.text, game.antialias, (0, 0, 0) if i == self.selected else (255, 255, 255))
             if i == self.selected:
                 pygame.draw.rect(game.display, (255, 255, 255),
-                                 ((game.WINDOW_WIDTH - surface.get_width()) // 2 - offset_x,
+                                 ((game.DISPLAY_WIDTH - surface.get_width()) // 2 - offset_x,
                                   (
-                                          game.WINDOW_HEIGHT - self.height) // 2 + i * game.font.get_height() + i * self.padding_y,
+                                          game.DISPLAY_HEIGHT - self.height) // 2 + i * game.font.get_height() + i * self.padding_y,
                                   surface.get_width(), surface.get_height()))
-            game.display.blit(surface, ((game.WINDOW_WIDTH - surface.get_width()) // 2 - offset_x,
+            game.display.blit(surface, ((game.DISPLAY_WIDTH - surface.get_width()) // 2 - offset_x,
                                         (
-                                                    game.WINDOW_HEIGHT - self.height) // 2 + i * game.font.get_height() + i * self.padding_y))
+                                                game.DISPLAY_HEIGHT - self.height) // 2 + i * game.font.get_height() + i * self.padding_y))
             if widget_surface:
                 game.display.blit(widget_surface, (
-                    game.WINDOW_WIDTH // 2 + offset_x,
-                    (game.WINDOW_HEIGHT - self.height) // 2 + i * game.font.get_height() + i * self.padding_y))
+                    game.DISPLAY_WIDTH // 2 + offset_x,
+                    (game.DISPLAY_HEIGHT - self.height) // 2 + i * game.font.get_height() + i * self.padding_y))
 
     class MenuItem:
         def __init__(self, text=None, callback=None):
@@ -122,7 +122,7 @@ class SettingsMenu(PauseMenu):
             return self.values[self.selected]
 
         def render(self):
-            return game.font.render(f"< {self.values[self.selected]} >", False, (255, 255, 255))
+            return game.font.render(f"< {self.values[self.selected]} >", game.antialias, (255, 255, 255))
 
         def on_keypress(self, key):
             if key == pygame.K_LEFT:
@@ -154,7 +154,7 @@ class SettingsMenu(PauseMenu):
                     self.value += self.step
 
         def render(self):
-            text = game.font.render(str(self.value), False, (255, 255, 255))
+            text = game.font.render(str(self.value), game.antialias, (255, 255, 255))
             text_width = max(50, text.get_width())
             surface = pygame.Surface((self.rect_width + text_width, self.height))
             padding = 2
@@ -194,24 +194,39 @@ class Game:
         self.keys_x = 0
         self.man = Entity("Theguy.png", (100, 100))
         self.in_menu = False
+        self.show_debug = True
         self.pause_menu = PauseMenu({
             "Resume": self.toggle_menu,
             "Settings": self.open_settings_menu,
             "Exit": self.exit,
         })
         self.settings_menu = SettingsMenu([
-            SettingsMenu.Slider(0, 10, 1, 2, text="Some Value"),
-            SettingsMenu.Slider(0, 15, 5, 5, text="Some Other Value"),
-            SettingsMenu.Checkbox(False, text="Checkbox!"),
-            SettingsMenu.ValueList(["1920x1080", "1280x720"], text="Resolution"),
+            SettingsMenu.Checkbox(self.show_debug, text="Show debug"),
+            SettingsMenu.Checkbox(False, text="Fullscreen"),
+            SettingsMenu.ValueList(game.resolutions, text="Resolution"),
             SettingsMenu.MenuItem(text="Save & Go Back", callback=self.save_settings)
         ])
+
+        self.settings = {}
+        for widget in self.settings_menu.options:
+            self.settings[widget.text] = widget.get()
+
         self.active_menu = self.pause_menu
         game.vampire = Player("player", 500, "ninja.png", (1, 1))
 
     def save_settings(self):
+        settings = {}
         for widget in self.settings_menu.options:
-            print(widget.text, widget.get())
+            settings[widget.text] = widget.get()
+        if settings["Fullscreen"] != self.settings["Fullscreen"]:
+            pygame.display.toggle_fullscreen()
+        if settings["Resolution"] != self.settings["Resolution"]:
+            game.DISPLAY_WIDTH, game.DISPLAY_HEIGHT = settings["Resolution"].split("x")
+            game.DISPLAY_WIDTH = int(game.DISPLAY_WIDTH)
+            game.DISPLAY_HEIGHT = int(game.DISPLAY_HEIGHT)
+            game.display = pygame.Surface((game.DISPLAY_WIDTH, game.DISPLAY_HEIGHT))
+        self.show_debug = settings["Show debug"]
+        self.settings = settings
         self.toggle_menu()
 
     def open_settings_menu(self):
@@ -262,6 +277,8 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+            if event.type == pygame.VIDEORESIZE:
+                game.WINDOW_WIDTH, game.WINDOW_HEIGHT = event.size
             if self.in_menu:
                 if event.type == pygame.KEYDOWN:
                     self.active_menu.on_keypress(event.key)
@@ -321,7 +338,7 @@ class Game:
         if collisions["br"] > 0:
             collided_w = collisions["br"]
         if collided_w == 32:
-            game.text("CHEST ! ! ! ", (game.WINDOW_WIDTH / 2, game.font.get_height()), center=True)
+            game.text("CHEST ! ! ! ", (game.DISPLAY_WIDTH / 2, game.font.get_height()), center=True)
             self.level.passthrough[159] = 44
             self.level.passthrough[160] = 44
             self.level.passthrough[161] = 44
@@ -346,8 +363,8 @@ class Game:
                 game.camera_x = int(game.vampire.position.x - game.camera_padding)
         else:
             game.camera_x = 0
-        if game.vampire.position.x - game.camera_x > game.WINDOW_WIDTH - game.camera_padding:
-            game.camera_x = int(game.vampire.position.x - game.WINDOW_WIDTH + game.camera_padding)
+        if game.vampire.position.x - game.camera_x > game.DISPLAY_WIDTH - game.camera_padding:
+            game.camera_x = int(game.vampire.position.x - game.DISPLAY_WIDTH + game.camera_padding)
 
     def resolve_tile_collision(self, entity):
         next_x = entity.position.x + entity.velocity.x * game.dt
@@ -385,7 +402,7 @@ class Game:
     def windowcolission(self):
         for i in [game.vampire]:
             # right side
-            if i.position.x + i.size > game.camera_x + game.WINDOW_WIDTH:
+            if i.position.x + i.size > game.camera_x + game.DISPLAY_WIDTH:
                 i.position.x -= i.bounce
                 i.velocity.x = abs(i.velocity.x) * -0.1
             # left side
@@ -397,7 +414,7 @@ class Game:
                 i.velocity.y = -abs(i.velocity.y) * -0.1
                 i.position.y += i.bounce
 
-            if i.position.y + i.size > game.WINDOW_HEIGHT:
+            if i.position.y + i.size > game.DISPLAY_HEIGHT:
                 i.position.xy = (0, 0)
 
     def tile_collision(self, position: Vector2, size: int, layer):
@@ -442,9 +459,11 @@ class Game:
                 game.vampire.render()
                 self.man.render()
 
-                game.text(
-                    f"grounded={game.vampire.grounded} x={game.vampire.position.x:06.1f} y={game.vampire.position.y:06.1f} camera={game.camera_x} entities={len(game.entities)}",
-                    (0, game.WINDOW_HEIGHT - game.font.get_height()))
+                if self.show_debug:
+                    game.text(
+                        f"grounded={game.vampire.grounded} x={game.vampire.position.x:06.1f} y={game.vampire.position.y:06.1f} camera={game.camera_x} entities={len(game.entities)} fps={1/game.dt:.0f}",
+                        (0, game.DISPLAY_HEIGHT - game.font.get_height()))
+            game.window.blit(pygame.transform.scale(game.display, (game.WINDOW_WIDTH, game.WINDOW_HEIGHT)), (0, 0))
             pygame.display.flip()
 
 

@@ -30,8 +30,8 @@ class Tilemap:
                     self.tiles.append(tile)
 
     def render(self):
-        rows_on_screen = game.WINDOW_HEIGHT // self.th
-        cols_on_screen = game.WINDOW_WIDTH // self.tw
+        rows_on_screen = game.DISPLAY_HEIGHT // self.th
+        cols_on_screen = game.DISPLAY_WIDTH // self.tw
         total_tiles = self.width * self.height
         starting_column = game.camera_x // self.tw
         for layer in [self.solids, self.detectors, self.passthrough]:
