@@ -16,19 +16,8 @@ class PauseMenu:
         self.options = options
         self.selected = 0
         self.height = len(options) * game.font.get_height()
-        # self.surface = pygame.Surface((0,0))
-        # self.widths = [0] * len(options)
-        # for i, item in enumerate(self.options.keys()):
-        #     new_surface = game.font.render(item, False, (255, 255, 255))
-        #     self.widths[i] = new_surface.get_width()
-        #     old_surface = self.surface
-        #     new_width = max(old_surface.get_width(), new_surface.get_width())
-        #     self.surface = pygame.Surface((new_width, old_surface.get_height() + game.font.get_height()))
-        #     self.surface.blit(old_surface, (new_width // 2 - old_surface.get_width() // 2, 0))
-        #     self.surface.blit(new_surface, (new_width // 2 - new_surface.get_width() // 2, game.font.get_height() * i))
+
     def render(self):
-        # pygame.draw.rect(game.display, (255,255,255), (game.WINDOW_WIDTH // 2 - self.widths[self.selected] // 2, game.WINDOW_HEIGHT // 2 - self.surface.get_height() // 2 + self.selected * game.font.get_height(), self.surface.get_width(), 10))
-        # game.display.blit(self.surface, ((game.WINDOW_WIDTH - self.surface.get_width()) // 2, game.WINDOW_HEIGHT // 2 - self.surface.get_height() // 2))
         for i, item in enumerate(self.options.keys()):
             surface = game.font.render(item, False, (255,255,255))
             if i == self.selected:
