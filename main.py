@@ -64,8 +64,8 @@ class Game:
         self.keys_y = 0
         self.keys_x = 0
         self.man = Entity("Theguy.png", (100, 100))
-        self.inpause = False
-        self.pausemenu = PauseMenu({
+        self.paused = False
+        self.pause_menu = PauseMenu({
             "Resume": self.toggle_pause,
             "Exit": self.exit,
         })
@@ -75,8 +75,8 @@ class Game:
         self.running = False
 
     def toggle_pause(self):
-        self.inpause = not self.inpause
-        if self.inpause:
+        self.paused = not self.paused
+        if self.paused:
             self.bg = (0, 0, 0)
         else:
             self.bg = (200, 200, 200)
@@ -92,17 +92,17 @@ class Game:
 
             if event.key == pygame.K_UP:
                 self.keys_y -= 1
-                if self.inpause:
-                    if self.pausemenu.selected > 0:
-                        self.pausemenu.selected -= 1
+                if self.paused:
+                    if self.pause_menu.selected > 0:
+                        self.pause_menu.selected -= 1
             if event.key == pygame.K_DOWN:
-                if self.inpause:
-                    if self.pausemenu.selected < len(self.pausemenu.options) - 1:
-                        self.pausemenu.selected += 1
+                if self.paused:
+                    if self.pause_menu.selected < len(self.pause_menu.options) - 1:
+                        self.pause_menu.selected += 1
 
             if event.key == pygame.K_RETURN:
-                if self.inpause:
-                    list(self.pausemenu.options.values())[self.pausemenu.selected]()
+                if self.paused:
+                    list(self.pause_menu.options.values())[self.pause_menu.selected]()
 
             if event.key == pygame.K_RIGHT:
                 self.keys_x += 1
@@ -285,8 +285,8 @@ class Game:
             self.input()
 
             game.display.fill(self.bg)
-            if self.inpause:
-                self.pausemenu.render()
+            if self.paused:
+                self.pause_menu.render()
             else:
                 self.level.render()
 
