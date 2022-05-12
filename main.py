@@ -11,6 +11,7 @@ from animations import AnimatedSprite
 import os
 from enemy import Enemy
 
+
 class PauseMenu:
     def __init__(self, options: dict):
         self.options = options
@@ -19,11 +20,13 @@ class PauseMenu:
 
     def render(self):
         for i, item in enumerate(self.options.keys()):
-            surface = game.font.render(item, False, (255,255,255))
+            surface = game.font.render(item, False, (255, 255, 255))
             if i == self.selected:
-                pygame.draw.rect(game.display, (41, 77, 135), (game.WINDOW_WIDTH // 2 - surface.get_width() // 2, game.WINDOW_HEIGHT // 2 - self.height // 2 + i * game.font.get_height(), surface.get_width(), surface.get_height()))
-            game.display.blit(surface, ((game.WINDOW_WIDTH - surface.get_width()) // 2, game.WINDOW_HEIGHT // 2 - self.height // 2 + i * game.font.get_height()))
-
+                pygame.draw.rect(game.display, (41, 77, 135), (game.WINDOW_WIDTH // 2 - surface.get_width() // 2,
+                                                               game.WINDOW_HEIGHT // 2 - self.height // 2 + i * game.font.get_height(),
+                                                               surface.get_width(), surface.get_height()))
+            game.display.blit(surface, ((game.WINDOW_WIDTH - surface.get_width()) // 2,
+                                        game.WINDOW_HEIGHT // 2 - self.height // 2 + i * game.font.get_height()))
 
 
 class Shuriken(Entity):
@@ -131,18 +134,20 @@ class Game:
         # flipping
         if game.vampire.velocity.x < 0 and game.vampire.lookleft == False:
             game.vampire.ent.flipped = True
-            count=0
+            count = 0
             for i in range(len(game.vampire.walkingimages)):
-                game.vampire.walkingimages[count]= pygame.transform.flip(game.vampire.walkingimages[count], True, False)
-                count+=1
+                game.vampire.walkingimages[count] = pygame.transform.flip(game.vampire.walkingimages[count], True,
+                                                                          False)
+                count += 1
             game.vampire.lookleft = True
 
         if game.vampire.velocity.x > 0 and game.vampire.lookleft == True:
             game.vampire.ent.flipped = False
-            count=0
+            count = 0
             for i in range(len(game.vampire.walkingimages)):
-                game.vampire.walkingimages[count]= pygame.transform.flip(game.vampire.walkingimages[count], True, False)
-                count+=1
+                game.vampire.walkingimages[count] = pygame.transform.flip(game.vampire.walkingimages[count], True,
+                                                                          False)
+                count += 1
             game.vampire.lookleft = False
 
         if self.keys_x == 0:
@@ -168,10 +173,10 @@ class Game:
             collided_w = collisions["br"]
         if collided_w == 32:
             game.text("CHEST ! ! ! ", (game.WINDOW_WIDTH / 2, game.font.get_height()), center=True)
-            self.level.passthrough[159]=44
+            self.level.passthrough[159] = 44
             self.level.passthrough[160] = 44
             self.level.passthrough[161] = 44
-            self.level.solids[159]=0
+            self.level.solids[159] = 0
             self.level.solids[160] = 0
             self.level.solids[161] = 0
 
@@ -265,7 +270,6 @@ class Game:
             return layer[tile_index]
         return -1
 
-
     def loop(self):
         clock = pygame.time.Clock()
 
@@ -293,7 +297,6 @@ class Game:
                     f"grounded={game.vampire.grounded} x={game.vampire.position.x:06.1f} y={game.vampire.position.y:06.1f} camera={game.camera_x} entities={len(game.entities)}",
                     (0, game.WINDOW_HEIGHT - game.font.get_height()))
             pygame.display.flip()
-
 
 
 Game().loop()
