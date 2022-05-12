@@ -17,16 +17,153 @@ class PauseMenu:
         self.options = options
         self.selected = 0
         self.height = len(options) * game.font.get_height()
+        self.padding_y = 5
 
     def render(self):
         for i, item in enumerate(self.options.keys()):
             surface = game.font.render(item, False, (0, 0, 0) if i == self.selected else (255, 255, 255))
             if i == self.selected:
-                pygame.draw.rect(game.display, (255, 255, 255), (game.WINDOW_WIDTH // 2 - surface.get_width() // 2,
-                                                               game.WINDOW_HEIGHT // 2 - self.height // 2 + i * game.font.get_height(),
-                                                               surface.get_width(), surface.get_height()))
+                pygame.draw.rect(game.display, (255, 255, 255), ((game.WINDOW_WIDTH - surface.get_width()) // 2,
+                                                                 (
+                                                                         game.WINDOW_HEIGHT - self.height) // 2 + i * game.font.get_height() + i * self.padding_y,
+                                                                 surface.get_width(), surface.get_height()))
             game.display.blit(surface, ((game.WINDOW_WIDTH - surface.get_width()) // 2,
-                                        game.WINDOW_HEIGHT // 2 - self.height // 2 + i * game.font.get_height()))
+                                        (
+                                                    game.WINDOW_HEIGHT - self.height) // 2 + i * game.font.get_height() + i * self.padding_y))
+
+    def on_keypress(self, key):
+        if key == pygame.K_DOWN:
+            if self.selected < len(self.options) - 1:
+                self.selected += 1
+        if key == pygame.K_UP:
+            if self.selected > 0:
+                self.selected -= 1
+        if key == pygame.K_RETURN:
+            list(self.options.values())[self.selected]()
+
+
+class SettingsMenu(PauseMenu):
+    def __init__(self, options: list):
+        super().__init__(options)
+
+    def on_keypress(self, key):
+        selected = self.options[self.selected]
+        if key == pygame.K_RETURN:
+            selected.on_select()
+            # return otherwise the Pausemenu will try to call the widget which won't work!
+            return
+        selected.on_keypress(key)
+        super().on_keypress(key)
+
+    def render(self):
+        for i, widget in enumerate(self.options):
+            widget_surface: pygame.Surface = widget.render()
+            offset_x = 100
+            surface = game.font.render(widget.text, False, (0, 0, 0) if i == self.selected else (255, 255, 255))
+            if i == self.selected:
+                pygame.draw.rect(game.display, (255, 255, 255),
+                                 ((game.WINDOW_WIDTH - surface.get_width()) // 2 - offset_x,
+                                  (
+                                          game.WINDOW_HEIGHT - self.height) // 2 + i * game.font.get_height() + i * self.padding_y,
+                                  surface.get_width(), surface.get_height()))
+            game.display.blit(surface, ((game.WINDOW_WIDTH - surface.get_width()) // 2 - offset_x,
+                                        (
+                                                    game.WINDOW_HEIGHT - self.height) // 2 + i * game.font.get_height() + i * self.padding_y))
+            if widget_surface:
+                game.display.blit(widget_surface, (
+                    game.WINDOW_WIDTH // 2 + offset_x,
+                    (game.WINDOW_HEIGHT - self.height) // 2 + i * game.font.get_height() + i * self.padding_y))
+
+    class MenuItem:
+        def __init__(self, text=None, callback=None):
+            self.height = game.font.get_height()
+            self.text = text
+            self.callback = callback
+            self.value = None
+
+        def get(self):
+            return self.value
+
+        def on_keypress(self, key):
+            pass
+
+        def render(self):
+            pass
+
+        def on_select(self):
+            if self.callback:
+                self.callback()
+
+    class Checkbox(MenuItem):
+        def __init__(self, value: bool, **kwargs):
+            super().__init__(**kwargs)
+            self.value = value
+            self.size = self.height
+            self.padding = 2
+
+        def on_select(self):
+            self.value = not self.value
+
+        def render(self):
+            surface = pygame.Surface((self.size, self.size))
+            pygame.draw.rect(surface, (255, 255, 255), (0, 0, self.size, self.size), self.padding)
+            inner_size = self.size - self.padding * 4
+            if self.value:
+                pygame.draw.rect(surface, (255, 255, 255), (self.padding * 2, self.padding * 2, inner_size, inner_size))
+            return surface
+
+    class ValueList(MenuItem):
+        def __init__(self, values: list, **kwargs):
+            super().__init__(**kwargs)
+            self.values = values
+            self.selected = 0
+
+        def get(self):
+            return self.values[self.selected]
+
+        def render(self):
+            return game.font.render(f"< {self.values[self.selected]} >", False, (255, 255, 255))
+
+        def on_keypress(self, key):
+            if key == pygame.K_LEFT:
+                if self.selected > 0:
+                    self.selected -= 1
+                else:
+                    self.selected = len(self.values) - 1
+            if key == pygame.K_RIGHT:
+                if self.selected < len(self.values) - 1:
+                    self.selected += 1
+                else:
+                    self.selected = 0
+
+    class Slider(MenuItem):
+        def __init__(self, min, max, step, value, **kwargs):
+            super().__init__(**kwargs)
+            self.min = min
+            self.max = max
+            self.step = step
+            self.value = value
+            self.rect_width = 100
+
+        def on_keypress(self, key):
+            if key == pygame.K_LEFT:
+                if self.value > self.min:
+                    self.value -= self.step
+            if key == pygame.K_RIGHT:
+                if self.value < self.max:
+                    self.value += self.step
+
+        def render(self):
+            text = game.font.render(str(self.value), False, (255, 255, 255))
+            text_width = max(50, text.get_width())
+            surface = pygame.Surface((self.rect_width + text_width, self.height))
+            padding = 2
+            pygame.draw.rect(surface, (255, 255, 255), (0, 0, self.rect_width, self.height), padding)
+            inner_width = (self.value / self.max) * self.rect_width - padding * 4
+            pygame.draw.rect(surface, (255, 255, 255),
+                             (padding * 2, padding * 2, inner_width, self.height - padding * 4), 0)
+            surface.blit(text, (self.rect_width + text_width - text.get_width(), 0))
+            return surface
 
 
 class Shuriken(Entity):
@@ -56,21 +193,41 @@ class Game:
         self.keys_y = 0
         self.keys_x = 0
         self.man = Entity("Theguy.png", (100, 100))
-        self.paused = False
+        self.in_menu = False
         self.pause_menu = PauseMenu({
-            "Resume": self.toggle_pause,
+            "Resume": self.toggle_menu,
+            "Settings": self.open_settings_menu,
             "Exit": self.exit,
         })
+        self.settings_menu = SettingsMenu([
+            SettingsMenu.Slider(0, 10, 1, 2, text="Some Value"),
+            SettingsMenu.Slider(0, 15, 5, 5, text="Some Other Value"),
+            SettingsMenu.Checkbox(False, text="Checkbox!"),
+            SettingsMenu.ValueList(["1920x1080", "1280x720"], text="Resolution"),
+            SettingsMenu.MenuItem(text="Save & Go Back", callback=self.save_settings)
+        ])
+        self.active_menu = self.pause_menu
         game.vampire = Player("player", 500, "ninja.png", (1, 1))
+
+    def save_settings(self):
+        for widget in self.settings_menu.options:
+            print(widget.text, widget.get())
+        self.toggle_menu()
+
+    def open_settings_menu(self):
+        self.in_menu = False  # force toggle_menu to flip back to True
+        self.toggle_menu()
+        self.active_menu = self.settings_menu
 
     def exit(self):
         self.running = False
 
-    def toggle_pause(self):
-        self.paused = not self.paused
-        if self.paused:
+    def toggle_menu(self):
+        self.in_menu = not self.in_menu
+        if self.in_menu:
             self.bg = (0, 0, 0)
         else:
+            self.active_menu = self.pause_menu
             self.bg = (200, 200, 200)
 
     def charinput(self, event):
@@ -84,17 +241,6 @@ class Game:
 
             if event.key == pygame.K_UP:
                 self.keys_y -= 1
-                if self.paused:
-                    if self.pause_menu.selected > 0:
-                        self.pause_menu.selected -= 1
-            if event.key == pygame.K_DOWN:
-                if self.paused:
-                    if self.pause_menu.selected < len(self.pause_menu.options) - 1:
-                        self.pause_menu.selected += 1
-
-            if event.key == pygame.K_RETURN:
-                if self.paused:
-                    list(self.pause_menu.options.values())[self.pause_menu.selected]()
 
             if event.key == pygame.K_RIGHT:
                 self.keys_x += 1
@@ -102,7 +248,7 @@ class Game:
                 self.keys_x -= 1
 
             if event.key == pygame.K_ESCAPE:
-                self.toggle_pause()
+                self.toggle_menu()
 
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
@@ -116,6 +262,9 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+            if self.in_menu:
+                if event.type == pygame.KEYDOWN:
+                    self.active_menu.on_keypress(event.key)
             self.charinput(event)
 
     def charactermovement(self):
@@ -278,8 +427,8 @@ class Game:
             self.input()
 
             game.display.fill(self.bg)
-            if self.paused:
-                self.pause_menu.render()
+            if self.in_menu:
+                self.active_menu.render()
             else:
                 self.level.render()
 
