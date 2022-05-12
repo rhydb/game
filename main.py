@@ -240,8 +240,6 @@ class Game:
             entity.grounded = False
         entity.position.y = next_y
 
-        game.text(f"grounded={game.vampire.grounded} x={game.vampire.position.x:06.1f} y={game.vampire.position.y:06.1f} camera={game.camera_x} entities={len(game.entities)}", (0, game.WINDOW_HEIGHT - game.font.get_height()))
-
     def get_tile_xy_at(self, x, y):
         tile_x = int(x // self.level.tw) * self.level.tw
         tile_y = int(y // self.level.th) * self.level.th
@@ -307,6 +305,10 @@ class Game:
                     entity.render()
                 game.vampire.render()
                 self.man.render()
+
+                game.text(
+                    f"grounded={game.vampire.grounded} x={game.vampire.position.x:06.1f} y={game.vampire.position.y:06.1f} camera={game.camera_x} entities={len(game.entities)}",
+                    (0, game.WINDOW_HEIGHT - game.font.get_height()))
             pygame.display.flip()
 
 
