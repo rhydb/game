@@ -226,11 +226,11 @@ class Game:
                 entity.velocity.x = 0
         entity.position.x = next_x
 
-        next_y = game.vampire.position.y + entity.velocity.y * game.dt
+        next_y = entity.position.y + entity.velocity.y * game.dt
         collisions = self.tile_collision(Vector2(entity.position.x, next_y), entity.size, self.level.solids)
         if collisions["tl"] > 0 or collisions["tr"] > 0:
             next_y = self.get_tile_xy_at(*entity.position.xy).y
-            game.vampire.velocity.y = 0
+            entity.velocity.y = 0
         if collisions["bl"] > 0 or collisions["br"] > 0:
             next_y = self.get_tile_xy_at(entity.position.x,
                                          entity.position.y + self.level.th // 2).y + (self.level.th - entity.size)
