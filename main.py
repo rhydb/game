@@ -20,9 +20,9 @@ class PauseMenu:
 
     def render(self):
         for i, item in enumerate(self.options.keys()):
-            surface = game.font.render(item, False, (255, 255, 255))
+            surface = game.font.render(item, False, (0, 0, 0) if i == self.selected else (255, 255, 255))
             if i == self.selected:
-                pygame.draw.rect(game.display, (41, 77, 135), (game.WINDOW_WIDTH // 2 - surface.get_width() // 2,
+                pygame.draw.rect(game.display, (255, 255, 255), (game.WINDOW_WIDTH // 2 - surface.get_width() // 2,
                                                                game.WINDOW_HEIGHT // 2 - self.height // 2 + i * game.font.get_height(),
                                                                surface.get_width(), surface.get_height()))
             game.display.blit(surface, ((game.WINDOW_WIDTH - surface.get_width()) // 2,
