@@ -1,4 +1,5 @@
 import copy
+import json
 from functools import reduce
 
 import game
@@ -113,10 +114,10 @@ class SettingsMenu(PauseMenu):
             return surface
 
     class ValueList(MenuItem):
-        def __init__(self, values: list, **kwargs):
+        def __init__(self, values: list, selected=0, **kwargs):
             super().__init__(**kwargs)
             self.values = values
-            self.selected = 0
+            self.selected = selected
 
         def get(self):
             return self.values[self.selected]
@@ -186,7 +187,6 @@ class Shuriken(Entity):
 
 class Game:
     def __init__(self):
-
         self.bg = (200, 200, 200)
         self.running = True
         self.level = Tilemap("map.tmj")
@@ -194,17 +194,16 @@ class Game:
         self.keys_x = 0
         self.man = Entity("Theguy.png", (100, 100))
         self.in_menu = False
-        self.show_debug = True
         self.pause_menu = PauseMenu({
             "Resume": self.toggle_menu,
             "Settings": self.open_settings_menu,
             "Exit": self.exit,
         })
         self.settings_menu = SettingsMenu([
-            SettingsMenu.Checkbox(self.show_debug, text="Show debug"),
+            SettingsMenu.Checkbox(game.settings["Debug"], text="Show debug"),
             SettingsMenu.Checkbox(False, text="Fullscreen"),
-            SettingsMenu.ValueList(game.resolutions, text="Resolution"),
-            SettingsMenu.MenuItem(text="Save & Go Back", callback=self.save_settings)
+            SettingsMenu.ValueList(game.resolutions, text="Resolution", selected=game.resolutions.index(game.settings["Resolution"])),
+            SettingsMenu.MenuItem(text="Save & Go Back", callback=self.save_and_go_back)
         ])
 
         self.settings = {}
@@ -214,7 +213,8 @@ class Game:
         self.active_menu = self.pause_menu
         game.vampire = Player("player", 500, "ninja.png", (1, 1))
 
-    def save_settings(self):
+
+    def save_and_go_back(self):
         settings = {}
         for widget in self.settings_menu.options:
             settings[widget.text] = widget.get()
@@ -225,9 +225,24 @@ class Game:
             game.DISPLAY_WIDTH = int(game.DISPLAY_WIDTH)
             game.DISPLAY_HEIGHT = int(game.DISPLAY_HEIGHT)
             game.display = pygame.Surface((game.DISPLAY_WIDTH, game.DISPLAY_HEIGHT))
-        self.show_debug = settings["Show debug"]
         self.settings = settings
+        self.save_settings()
         self.toggle_menu()
+
+    def save_settings(self):
+        self.settings = {}
+        for widget in self.settings_menu.options:
+            self.settings[widget.text] = widget.get()
+
+        game.settings["FPS"] = game.FPS
+        game.settings["WINDOW_WIDTH"] = game.WINDOW_WIDTH
+        game.settings["WINDOW_HEIGHT"] = game.WINDOW_HEIGHT
+        game.settings["Fullscreen"] = self.settings["Fullscreen"]
+        game.settings["Debug"] = self.settings["Show debug"]
+        game.settings["Resolution"] = self.settings["Resolution"]
+
+        with open("settings.json", "w") as f:
+            json.dump(game.settings, f)
 
     def open_settings_menu(self):
         self.in_menu = False  # force toggle_menu to flip back to True
@@ -244,6 +259,7 @@ class Game:
         else:
             self.active_menu = self.pause_menu
             self.bg = (200, 200, 200)
+        self.save_settings()
 
     def charinput(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -457,12 +473,12 @@ class Game:
                 game.vampire.render()
                 self.man.render()
 
-                if self.show_debug:
+                if game.settings["Debug"]:
                     game.text(
                         f"grounded={game.vampire.grounded} x={game.vampire.position.x:06.1f} y={game.vampire.position.y:06.1f} camera={game.camera_x} entities={len(game.entities)} fps={1/game.dt:.0f}",
                         (0, game.DISPLAY_HEIGHT - game.font.get_height()))
             game.window.blit(pygame.transform.scale(game.display, (game.WINDOW_WIDTH, game.WINDOW_HEIGHT)), (0, 0))
             pygame.display.flip()
-
+        self.save_settings()
 
 Game().loop()
