@@ -31,3 +31,9 @@ def text(text, pos, colour=(0, 0, 0), antialias=antialias, center=False):
         pos.x -= rect.w / 2
         pos.y -= rect.h / 2
     display.blit(surface, pos)
+
+
+def screen_to_world(pos: Vector2):
+    pos.x = pos.x / WINDOW_WIDTH * DISPLAY_WIDTH + camera_x
+    pos.y = pos.y / WINDOW_HEIGHT * DISPLAY_HEIGHT
+    return pos

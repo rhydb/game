@@ -249,7 +249,8 @@ class Game:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == pygame.BUTTON_LEFT:
                 shuriken = Shuriken(game.vampire.position)
-                shuriken.velocity = pygame.mouse.get_pos() - (game.vampire.position - (game.camera_x, 0))
+                mouse = game.screen_to_world(Vector2(pygame.mouse.get_pos()))
+                shuriken.velocity = mouse - (game.camera_x, 0) - (game.vampire.position - (game.camera_x, 0))
                 shuriken.velocity.scale_to_length(1000)
                 game.entities.append(shuriken)
         if event.type == pygame.KEYDOWN:
@@ -348,15 +349,12 @@ class Game:
 
         self.resolve_tile_collision(game.vampire)
 
-        if not game.vampire.grounded and game.vampire.velocity.y > 0:
-            game.vampire.ent.row = 2
+        if game.vampire.velocity.x != 0:
+            game.vampire.ent.row = 1
+            game.vampire.ent.fps = 15
         else:
-            if game.vampire.velocity.x != 0:
-                game.vampire.ent.row = 1
-                game.vampire.ent.fps = 15
-            else:
-                game.vampire.ent.row = 0
-                game.vampire.ent.fps = 2
+            game.vampire.ent.row = 0
+            game.vampire.ent.fps = 2
 
         if game.vampire.position.x > game.camera_padding:
             if game.vampire.position.x - game.camera_x < game.camera_padding:
