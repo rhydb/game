@@ -34,7 +34,8 @@ except OSError:
         "WINDOW_WIDTH": WINDOW_WIDTH,
         "WINDOW_HEIGHT": WINDOW_HEIGHT,
         "Fullscreen": False,
-        "Debug": True
+        "Debug": True,
+        "Resolution": f"{DISPLAY_WIDTH}x{DISPLAY_HEIGHT}",
     }
     with open("settings.json", "w") as f:
         json.dump(settings, f)
@@ -44,14 +45,14 @@ pygame.font.init()
 font = pygame.font.Font(pygame.font.match_font("monospace"), 18)
 antialias = True
 print("Creating display")
-window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.RESIZABLE)
+window = pygame.display.set_mode(
+    (WINDOW_WIDTH, WINDOW_HEIGHT), pygame.RESIZABLE)
 available_modes = pygame.display.list_modes()
 display = pygame.Surface((DISPLAY_WIDTH, DISPLAY_HEIGHT))
 resolutions = [f"{width}x{height}" for (width, height) in available_modes]
 entities = []
 
 vampire = None
-
 
 
 def text(text, pos, colour=(0, 0, 0), antialias=antialias, center=False):
