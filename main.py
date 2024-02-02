@@ -19,6 +19,7 @@ class PauseMenu:
         self.selected = 0
         self.height = len(options) * game.font.get_height()
         self.padding_y = 5
+        self.mouse_down = False
 
     def render(self):
         for i, item in enumerate(self.options.keys()):
@@ -154,6 +155,9 @@ class SettingsMenu(PauseMenu):
                 if self.value < self.max:
                     self.value += self.step
 
+        def on_mouse_click(self, x, y):
+            print("slider click")
+
         def render(self):
             text = game.font.render(str(self.value), game.antialias, (255, 255, 255))
             text_width = max(50, text.get_width())
@@ -203,6 +207,7 @@ class Game:
             SettingsMenu.Checkbox(game.settings["Debug"], text="Show debug"),
             SettingsMenu.Checkbox(False, text="Fullscreen"),
             SettingsMenu.ValueList(game.resolutions, text="Resolution", selected=game.resolutions.index(game.settings["Resolution"])),
+            SettingsMenu.Slider(1, 300, 10, game.settings["FPS"], text="FPS"),
             SettingsMenu.MenuItem(text="Save & Go Back", callback=self.save_and_go_back)
         ])
 
@@ -234,7 +239,7 @@ class Game:
         for widget in self.settings_menu.options:
             self.settings[widget.text] = widget.get()
 
-        game.settings["FPS"] = game.FPS
+        game.settings["FPS"] = self.settings["FPS"]
         game.settings["WINDOW_WIDTH"] = game.WINDOW_WIDTH
         game.settings["WINDOW_HEIGHT"] = game.WINDOW_HEIGHT
         game.settings["Fullscreen"] = self.settings["Fullscreen"]
@@ -271,23 +276,23 @@ class Game:
                 game.entities.append(shuriken)
         if event.type == pygame.KEYDOWN:
 
-            if event.key == pygame.K_UP:
+            if event.key == game.KEY_UP:
                 self.keys_y -= 1
 
-            if event.key == pygame.K_RIGHT:
+            if event.key == game.KEY_RIGHT:
                 self.keys_x += 1
-            if event.key == pygame.K_LEFT:
+            if event.key == game.KEY_LEFT:
                 self.keys_x -= 1
 
-            if event.key == pygame.K_ESCAPE:
+            if event.key == game.KEY_BACK:
                 self.toggle_menu()
 
         if event.type == pygame.KEYUP:
-            if event.key == pygame.K_LEFT:
+            if event.key == game.KEY_LEFT:
                 self.keys_x += 1
-            if event.key == pygame.K_RIGHT:
+            if event.key == game.KEY_RIGHT:
                 self.keys_x -= 1
-            if event.key == pygame.K_UP:
+            if event.key == game.KEY_UP:
                 self.keys_y += 1
 
     def input(self):
@@ -359,7 +364,7 @@ class Game:
             self.level.passthrough[159] = 44
             self.level.passthrough[160] = 44
             self.level.passthrough[161] = 44
-            self.level.solids[159] = 0
+            self.level.solids[159] = 44
             self.level.solids[160] = 0
             self.level.solids[161] = 0
 
@@ -454,7 +459,7 @@ class Game:
         clock = pygame.time.Clock()
 
         while self.running:
-            game.dt = clock.tick(game.FPS) / 1000
+            game.dt = clock.tick(game.settings["FPS"]) / 1000
             self.input()
 
             game.display.fill(self.bg)
@@ -474,8 +479,10 @@ class Game:
                 self.man.render()
 
                 if game.settings["Debug"]:
+                    if game.dt > 0:
+                        game.text(f"fps={1/game.dt:.0f} / {game.settings['FPS']}", (0, 0))
                     game.text(
-                        f"grounded={game.vampire.grounded} x={game.vampire.position.x:06.1f} y={game.vampire.position.y:06.1f} camera={game.camera_x} entities={len(game.entities)} fps={1/game.dt:.0f}",
+                        f"grounded={game.vampire.grounded} x={game.vampire.position.x:06.1f} y={game.vampire.position.y:06.1f} camera={game.camera_x} entities={len(game.entities)}",
                         (0, game.DISPLAY_HEIGHT - game.font.get_height()))
             game.window.blit(pygame.transform.scale(game.display, (game.WINDOW_WIDTH, game.WINDOW_HEIGHT)), (0, 0))
             pygame.display.flip()

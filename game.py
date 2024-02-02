@@ -12,6 +12,13 @@ dt = 0
 camera_x = 0
 camera_padding = 200
 
+# controls
+KEY_LEFT = pygame.K_a
+KEY_RIGHT = pygame.K_d
+KEY_UP = pygame.K_w
+KEY_DOWN = pygame.K_s
+KEY_BACK = pygame.K_ESCAPE
+KEY_SPACE = pygame.K_SPACE
 
 settings = {}
 try:
